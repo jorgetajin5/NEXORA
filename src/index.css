@@ -1,0 +1,74 @@
+:root {
+    --color-primary-dark: #765411;
+    --color-primary-dark-hover: #5d420c;
+    --color-primary-gold: #b68826;
+    --color-primary-gold-hover: #9c731d;
+    --color-primary-light: #fdf8ee;
+    --color-primary-badge-bg: #fcf6e7;
+    --color-primary-border: #d4ab53;
+    --color-frame-border: #7a5813;
+
+    --color-text-heading: #111827;
+    --color-text-body: #667085;
+    --color-text-nav: #4b5563;
+    --color-text-nav-active: #765411;
+
+    --color-bg-page: #ffffff;
+    --color-bg-bottom: #fcf7ec;
+    --color-chevron: #b58b29;
+
+    --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    --font-heading: 'Plus Jakarta Sans', 'Outfit', sans-serif;
+
+    --shadow-sm: 0 2px 8px rgba(118, 84, 17, 0.08);
+    --shadow-md: 0 6px 18px rgba(118, 84, 17, 0.12);
+    --shadow-lg: 0 16px 32px -4px rgba(0, 0, 0, 0.12), 0 6px 12px -2px rgba(0, 0, 0, 0.06);
+    --shadow-btn: 0 8px 20px -4px rgba(118, 84, 17, 0.35);
+
+    --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    min-height: 100%;
+    font-family: var(--font-sans);
+    color: var(--color-text-body);
+    background-color: var(--color-bg-page);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.5;
+    overflow-x: hidden;
+}
+
+#root {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+button {
+    font-family: inherit;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
