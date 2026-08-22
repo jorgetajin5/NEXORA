@@ -1,9 +1,11 @@
 import './Home.css';
 
-export default function Home() {
+export default function Home({ onNavigate }) {
     const handleCtaClick = (e, action) => {
         e.preventDefault();
-        console.log(`Action clicked: ${action}`);
+        if (onNavigate) {
+            onNavigate(action);
+        }
     };
 
     const handleScrollDown = (e) => {
