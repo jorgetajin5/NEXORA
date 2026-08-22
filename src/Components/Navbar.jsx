@@ -5,10 +5,10 @@ export default function Navbar({ activePage = 'inicio', onNavigate }) {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     const navItems = [
-        { label: 'Inicio', id: 'inicio' },
-        { label: 'Escuelas', id: 'escuelas' },
-        { label: 'Acerca de', id: 'acerca' },
-        { label: 'Soporte', id: 'soporte' },
+        { label: 'Inicio', id: 'inicio', href: '/' },
+        { label: 'Escuelas', id: 'escuelas', href: '#escuelas' },
+        { label: 'Acerca de', id: 'acerca', href: '#acerca' },
+        { label: 'Soporte', id: 'soporte', href: '#soporte' },
     ];
 
     const handleNavClick = (e, pageId) => {
@@ -23,7 +23,7 @@ export default function Navbar({ activePage = 'inicio', onNavigate }) {
         <header className="navbar-header">
             <div className="navbar-container">
                 <a
-                    href="#inicio"
+                    href="/"
                     className="navbar-brand"
                     onClick={(e) => handleNavClick(e, 'inicio')}
                     aria-label="Nexora - Inicio"
@@ -53,7 +53,7 @@ export default function Navbar({ activePage = 'inicio', onNavigate }) {
                             return (
                                 <li key={item.id} className="navbar-item">
                                     <a
-                                        href={`#${item.id}`}
+                                        href={item.href}
                                         className={`navbar-link ${isActive ? 'active' : ''}`}
                                         onClick={(e) => handleNavClick(e, item.id)}
                                     >

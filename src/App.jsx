@@ -13,18 +13,26 @@ function App() {
   const [activePage, setActivePage] = useState(getInitialPage);
 
   useEffect(() => {
-    const handleHashChange = () => {
+    const handleUrlChange = () => {
       const hash = window.location.hash.replace('#', '').trim();
       setActivePage(hash || 'inicio');
     };
 
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
+    window.addEventListener('hashchange', handleUrlChange);
+    window.addEventListener('popstate', handleUrlChange);
+    return () => {
+      window.removeEventListener('hashchange', handleUrlChange);
+      window.removeEventListener('popstate', handleUrlChange);
+    };
   }, []);
 
   const handleNavigate = (pageId) => {
     setActivePage(pageId);
-    window.location.hash = pageId === 'inicio' ? '' : pageId;
+    if (pageId === 'inicio') {
+      window.history.pushState(null, '', window.location.pathname);
+    } else {
+      window.history.pushState(null, '', `#${pageId}`);
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
