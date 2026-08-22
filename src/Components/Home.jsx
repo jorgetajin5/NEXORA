@@ -1,5 +1,9 @@
 import './Home.css';
 
+
+
+
+
 export default function Home({ onNavigate }) {
     const handleCtaClick = (e, action) => {
         e.preventDefault();

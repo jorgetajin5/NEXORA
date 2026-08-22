@@ -1,0 +1,133 @@
+/* AcercaDe.css */
+.about-main {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex: 1;
+    width: 100%;
+    position: relative;
+    background-color: var(--color-bg-page);
+    animation: fadeInPage 0.4s ease-out forwards;
+}
+
+.about-container {
+    max-width: 1320px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 2.5rem 2.5rem 1.5rem 2.5rem;
+    display: grid;
+    grid-template-columns: 1.08fr 1fr;
+    gap: 3.5rem;
+    align-items: center;
+}
+
+.about-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    z-index: 2;
+}
+
+/* Reutilizando la estética de los textos y botones */
+.about-title {
+    font-family: var(--font-heading);
+    font-size: clamp(2.5rem, 4.2vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1.15;
+    color: var(--color-text-heading);
+    margin-bottom: 1.25rem;
+    letter-spacing: -0.025em;
+}
+
+.about-description {
+    font-size: 1.0625rem;
+    line-height: 1.62;
+    color: var(--color-text-body);
+    max-width: 520px;
+    margin-bottom: 2.25rem;
+}
+
+/* Modificación para las tarjetas del equipo (2x2) */
+.team-features {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 580px;
+}
+
+.team-card {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.75rem;
+    border-radius: 12px;
+    transition: transform var(--transition-fast), background-color var(--transition-fast);
+}
+
+.team-card:hover {
+    transform: translateY(-2px);
+    background-color: var(--color-primary-light);
+}
+
+.team-icon-wrapper {
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    border-radius: 50%;
+    background-color: var(--color-primary-badge-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-primary-gold);
+    box-shadow: 0 2px 6px rgba(182, 136, 38, 0.15);
+}
+
+.team-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+}
+
+.team-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--color-text-heading);
+    line-height: 1.2;
+}
+
+.team-role {
+    font-size: 0.75rem;
+    color: #71717a;
+    line-height: 1.35;
+    font-weight: 500;
+}
+
+/* Responsive para la sección del equipo */
+@media (max-width: 1100px) {
+    .about-container {
+        gap: 2rem;
+        padding: 2rem 1.5rem 1.5rem 1.5rem;
+    }
+}
+
+@media (max-width: 900px) {
+    .about-container {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+        padding-top: 1rem;
+    }
+    .about-content {
+        align-items: center;
+        text-align: center;
+    }
+    .team-features {
+        text-align: left;
+    }
+}
+
+@media (max-width: 640px) {
+    .team-features {
+        grid-template-columns: 1fr; /* Una columna en móviles */
+    }
+}
