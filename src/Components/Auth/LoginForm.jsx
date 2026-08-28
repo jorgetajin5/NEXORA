@@ -4,10 +4,11 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfi
 import { auth } from '../../firebase';
 
 import './LoginForm.css'; //estilos del formulario
+import Dashboard from '../Dashboard/Dashboard';
 
 
 
-export default function LoginForm({ role, onBack }) {
+export default function LoginForm({ role, onBack, onLoginSuccess}) {
     // estados para capturar los datos del formulario y controlar la vista
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
@@ -51,6 +52,7 @@ export default function LoginForm({ role, onBack }) {
 
                 console.log("Usuario registrado exitosamente:", userCredential.user);
                 // >>> redirigir al panel de control (Dashboard)
+                if (onLoginSuccess) onLoginSuccess(userCredential.user);
 
             } else {
                 // Modo Login
@@ -58,6 +60,7 @@ export default function LoginForm({ role, onBack }) {
                 console.log("Inicio de sesión exitoso:");
                 // console.log("Inicio de sesión exitoso:", userCredential.user);
                 // redirigir a Dashboard
+                if (onLoginSuccess) onLoginSuccess(userCredential.user);
             }
         } catch (error) {
             console.error("Error de Firebase:", error.code);
@@ -81,6 +84,8 @@ export default function LoginForm({ role, onBack }) {
             //console.log("Autenticación con Google exitosa:", result.user);
 
             // redirigir al Dashboard
+            if (onLoginSuccess) onLoginSuccess(result.user);
+
         } catch (error) {
             console.error("Error de Firebase con Google:", error.code);
             // Controla si el usuario cierra la ventana antes de terminar

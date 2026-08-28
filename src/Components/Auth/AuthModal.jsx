@@ -3,7 +3,7 @@ import './Auth.css';
 import RoleSelect from './RoleSelect';
 import LoginForm from './LoginForm';
 
-const AuthModal = ({ isOpen, onClose }) => {
+const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
 
     const [view, setView] = useState('roleSelect'); // seleccion del rol
     const [selectedRole, setSelectedRole] = useState(null); // guarda el rol "docente", etc.
@@ -35,7 +35,15 @@ const AuthModal = ({ isOpen, onClose }) => {
                 {view === 'roleSelect' ? (
                     <RoleSelect onRoleSelected={handleRoleSelection} />
                 ) : (
-                    <LoginForm role={selectedRole} onBack={() => setView('roleSelect')} />
+                    <LoginForm 
+                        role={selectedRole} 
+                        onBack={() => setView('roleSelect')} 
+                        // Recibe el usuario, cierra el modal y avisa a app.jsx
+                        onLoginSuccess={(user) => {
+                            handleClose(); // Cierra el modal
+                            if (onLoginSuccess) onLoginSuccess(user); // Envía los datos
+                        }}
+                    />
                 )}
                 
             </div>

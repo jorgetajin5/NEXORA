@@ -5,14 +5,25 @@ import AcercaDe from './pages/About/AcercaDe'; // <-- 1. Importamos la nueva pá
 import UnderConstruction from './pages/UnderConstruction/UnderConstruction';
 import AuthModal from './Components/Auth/AuthModal';
 import './App.css';
+import Dashboard from './Components/Dashboard/Dashboard';
+
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from './firebase';
 
 function App() {
+
+  // estado para controlar la sesión del usuario
+  const [user, setUser] = useState(null);
+
+  // Estado para mostrar una pantalla de carga
+  const [loadingAuth, setLoadingAuth] = useState(true);
+
   // Estado para controlar si el modal está abierto o cerrado
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   // Funciones para abrir y cerrar
-    const openAuthModal = () => setIsAuthModalOpen(true);
-    const closeAuthModal = () => setIsAuthModalOpen(false);
+  const openAuthModal = () => setIsAuthModalOpen(true);
+  const closeAuthModal = () => setIsAuthModalOpen(false);
 
   const getInitialPage = () => {
     const hash = window.location.hash.replace('#', '').trim();
@@ -45,12 +56,12 @@ function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // 2. Creamos esta función para manejar qué componente mostrar
+  //  función para manejar qué componente mostrar
   const renderContent = () => {
     if (activePage === 'inicio') {
-      return <Home onNavigate={handleNavigate} onOpenModal = {openAuthModal} />;
+      return <Home onNavigate={handleNavigate} onOpenModal={openAuthModal} />;
     }
-    
+
     if (activePage === 'acerca') { // <-- Validamos el ID exacto que usa tu Navbar
       return <AcercaDe />;
     }
@@ -58,12 +69,46 @@ function App() {
     return <UnderConstruction pageId={activePage} onNavigate={handleNavigate} />;
   };
 
+
+  // Observador de sesión de Firebase
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser); // Si hay sesión, guarda los datos; si no, guarda null
+      setLoadingAuth(false); // Termina la validación
+    });
+
+    // limpia observador 
+    return () => unsubscribe();
+  }, []);
+
+
+  // Pantalla de carga mientras Firebase verifica
+  if (loadingAuth) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', backgroundColor: '#fdfaf2', color: '#ffeabb' }}>
+        <h2>Cargando...</h2>
+      </div>
+    );
+  }
+
+
+  // condicional: si hay usuario, muestra solo el DASHBOARD
+  if (user) {
+    return <Dashboard />;
+  }
+
+  // si no hay usuario, muestra la landingPage
   return (
     <div className="app-layout">
       <Navbar activePage={activePage} onNavigate={handleNavigate} />
-      {/* 3. Llamamos a la función aquí */}
       {renderContent()}
-      <AuthModal isOpen={isAuthModalOpen} onClose={closeAuthModal} />
+
+      {/* Pasa funcion para actualizar el estado user al tener exito*/}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={closeAuthModal}
+        onLoginSuccess={(loggedUser) => setUser(loggedUser)}
+      />
     </div>
   );
 }
