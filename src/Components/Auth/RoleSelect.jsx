@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-// se coloca la función principal para que React no lo vuelva a crear cada vez que el componente se actualice.
+
 const ROLES = [
     {
         id: 'docente',
