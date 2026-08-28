@@ -29,10 +29,15 @@ export default function Navbar({ activePage = 'inicio', onNavigate }) {
                     aria-label="Nexora - Inicio"
                 >
                     <img
-                        src="/logoNexora.png"
+                        src="/logo.png"
                         alt="Nexora Logo"
                         className="navbar-logo-img"
                     />
+
+                    <div className='navbar-brand-text'>
+                        <span className='brand-title'>NEXORA</span>
+                        <span className='brand-subtitle'>Plataforma educativa integrada</span>
+                    </div>
                 </a>
 
                 <button

@@ -1,26 +1,34 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+
 .navbar-header {
     width: 100%;
     background-color: var(--color-bg-page);
     position: relative;
     z-index: 50;
-    padding: 1.25rem 0 0.75rem 0;
+    padding: 0.95rem 0.4rem 0.2rem ;
+    border-bottom: 2px solid #f1e3b7;
+    padding-bottom: 0.8rem;
 }
 
 .navbar-container {
-    max-width: 1320px;
+    max-width: 100%;
     margin: 0 auto;
-    padding: 0 2.5rem;
+    padding: 0 1.5rem 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    position: relative;
 }
 
 .navbar-brand {
     display: flex;
+
     align-items: center;
     gap: 0.75rem;
     text-decoration: none;
     transition: transform var(--transition-fast);
+    margin-left: 0rem;
+
 }
 
 .navbar-brand:hover {
@@ -33,19 +41,55 @@
     object-fit: contain;
 }
 
+
+/* brand-text */
+.navbar-brand-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* estilo para la palabra NEXORA */
+
+.brand-title {
+    font-size: 1.5rem;
+    font-weight: 900;
+    font-family: 'Inter', 'Arial', sans-serif;
+    color: #7F6000;
+    line-height: 0.9;
+    letter-spacing: 0.5px;
+}
+
+/* estilo para "Plataforma educativa..." */
+.brand-subtitle {
+    font-size: 0.75rem;
+    font-family: 'Inter', 'Arial', sans-serif;
+    color: #888888;
+    font-weight: 400;
+    margin-top: 0.1rem;
+}
+
 /* Nav Menu */
 .navbar-nav {
     display: flex;
     align-items: center;
-    /* Centered in relation to content */
-    margin-right: auto;
-    margin-left: 5rem;
+    margin: 0;
+}
+
+/* Centrado absoluto */
+@media (min-width: 992px) {
+    .navbar-nav {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+    }
 }
 
 .navbar-links {
     display: flex;
     align-items: center;
-    gap: 2.5rem;
+    justify-content: center;
+    gap: 2.2rem;
     list-style: none;
     padding: 0;
     margin: 0;
@@ -56,11 +100,11 @@
 }
 
 .navbar-link {
-    font-size: 0.95rem;
+    font-size: 0.8rem;
     font-weight: 500;
     color: var(--color-text-nav);
     text-decoration: none;
-    padding: 0.5rem 0.25rem;
+    padding: 0.5rem 0.55rem;
     display: inline-flex;
     flex-direction: column;
     align-items: center;
@@ -136,18 +180,8 @@
     transform: translateY(-7px) rotate(-45deg);
 }
 
-/* Responsive Breakpoints */
-@media (max-width: 960px) {
-    .navbar-nav {
-        margin-left: 2rem;
-    }
-
-    .navbar-links {
-        gap: 1.5rem;
-    }
-}
-
-@media (max-width: 768px) {
+/* Responsive */
+@media (max-width: 991px) {
     .navbar-container {
         padding: 0 1.5rem;
     }
@@ -174,6 +208,10 @@
         margin: 0;
         transition: right var(--transition-normal);
         z-index: 55;
+
+        /* resetear el centrado de PC */
+        left: auto;
+        transform: none;
     }
 
     .navbar-nav.open {
