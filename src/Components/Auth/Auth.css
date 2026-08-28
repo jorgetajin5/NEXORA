@@ -15,12 +15,13 @@
 .modal-content {
     background-color: #ffffff;
     border-radius: 20px;
+    /* padding: 2.5rem; */
+    padding: 0;
     width: 90%;
     max-width: 750px; 
     position: relative;
     box-shadow: 0 10px 30px rgba(247, 237, 216, 0.76);
     animation: modalFadeIn 0.3s ease-out forwards;
-
 
     overflow: hidden;
     transition: max-width 0.3s ease;
@@ -29,7 +30,6 @@
 /* Transición de tamaño entre RoleSelector y login */
 .modal-content.is-login-view {
     max-width: 800px;
-
 }
 
 .modal-close-btn {

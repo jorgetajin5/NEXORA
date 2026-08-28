@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import './Auth.css';
 import RoleSelect from './RoleSelect';
@@ -46,7 +45,7 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
                         }}
                     />
                 )}
-                 Login
+                
             </div>
         </div>
     );
