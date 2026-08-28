@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 // herramientas de Firebase
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth } from '../../firebase';
 
 import './LoginForm.css'; //estilos del formulario
@@ -64,6 +64,33 @@ export default function LoginForm({ role, onBack }) {
             else setErrorMsg('Ocurrió un error. Inténtalo de nuevo.');
         }
     };
+
+
+    // Función para autenticación con Google
+    const handleGoogleSignIn = async () => {
+        setErrorMsg(''); // Limpia errores previos
+        const provider = new GoogleAuthProvider();
+        
+        try {
+            const result = await signInWithPopup(auth, provider);
+            console.log("Autenticación con Google exitosa:");
+            //console.log("Autenticación con Google exitosa:", result.user);
+            
+            // redirigir al Dashboard
+        } catch (error) {
+            console.error("Error de Firebase con Google:", error.code);
+            // Controla si el usuario cierra la ventana antes de terminar
+            if (error.code === 'auth/popup-closed-by-user') {
+                return; // se ignora error.
+            }
+            setErrorMsg('Ocurrió un error al conectar con Google.');
+        }
+    };
+
+
+
+
+
 
     // Función para alternar entre Login y Registro
     const toggleMode = (e) => {
@@ -203,7 +230,7 @@ export default function LoginForm({ role, onBack }) {
                     <span className="divider-text">o continua con</span>
                 </div>
 
-                <button type="button" className="btn-social-login">
+                <button type="button" className="btn-social-login" onClick={handleGoogleSignIn}>
                     <svg className="social-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
                         <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
