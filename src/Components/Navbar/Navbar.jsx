@@ -19,6 +19,19 @@ export default function Navbar({ activePage = 'inicio', onNavigate }) {
         }
     };
 
+    const Navbar = ({ onOpenModal }) => {
+    return (
+        <nav className="navbar">
+            {/* ... logo y enlaces ... */}
+            
+            {/* Agregar onClick al botón de login */}
+            <button className="btn-login" onClick={onOpenModal}>
+                Iniciar sesión
+            </button>
+        </nav>
+    );
+};
+
     return (
         <header className="navbar-header">
             <div className="navbar-container">

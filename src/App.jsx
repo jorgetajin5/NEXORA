@@ -1,11 +1,19 @@
 import { useState, useEffect } from 'react';
-import Navbar from './Components/Navbar';
-import Home from './Components/Home';
-import AcercaDe from './Components/AcercaDe'; // <-- 1. Importamos la nueva página
-import UnderConstruction from './Components/UnderConstruction';
+import Navbar from './Components/Navbar/Navbar';
+import Home from './pages/Home/Home';
+import AcercaDe from './pages/About/AcercaDe'; // <-- 1. Importamos la nueva página
+import UnderConstruction from './pages/UnderConstruction/UnderConstruction';
+import AuthModal from './Components/Auth/AuthModal';
 import './App.css';
 
 function App() {
+  // Estado para controlar si el modal está abierto o cerrado
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+
+  // Funciones para abrir y cerrar
+    const openAuthModal = () => setIsAuthModalOpen(true);
+    const closeAuthModal = () => setIsAuthModalOpen(false);
+
   const getInitialPage = () => {
     const hash = window.location.hash.replace('#', '').trim();
     return hash || 'inicio';
@@ -41,7 +49,7 @@ function App() {
   const renderContent = () => {
     if (activePage === 'inicio') {
       return <Home onNavigate={handleNavigate} />;
-    } 
+    }
     if (activePage === 'acerca') { // <-- Validamos el ID exacto que usa tu Navbar
       return <AcercaDe />;
     }
@@ -54,6 +62,7 @@ function App() {
       <Navbar activePage={activePage} onNavigate={handleNavigate} />
       {/* 3. Llamamos a la función aquí */}
       {renderContent()}
+      <AuthModal isOpen={isAuthModalOpen} onClose={closeAuthModal} />
     </div>
   );
 }
