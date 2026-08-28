@@ -4,12 +4,12 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.45); /* Fondo semitransparente */
-    backdrop-filter: blur(4px); /* Efecto de desenfoque moderno */
+    background-color: rgba(0, 0, 0, 0.671); /* Fondo semitransparente */
+    backdrop-filter: blur(4px); /* Efecto de desenfoque*/
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 9999; /* Asegura que esté por encima del Navbar y todo lo demás */
+    z-index: 9999; 
 }
 
 .modal-content {
@@ -17,9 +17,9 @@
     border-radius: 20px;
     padding: 2.5rem;
     width: 90%;
-    max-width: 750px; /* Ancho basado en tu diseño del mockup */
+    max-width: 750px; 
     position: relative;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 10px 30px rgba(247, 237, 216, 0.76);
     animation: modalFadeIn 0.3s ease-out forwards;
 }
 
@@ -27,7 +27,7 @@
     position: absolute;
     top: 20px;
     right: 20px;
-    background-color: #fcf6e5; /* Fondo beige claro del botón */
+    background-color: #fcf6e5; /* Fondo claro del botón */
     color: #b68826; /* Color dorado del ícono X */
     border: none;
     border-radius: 50%;
@@ -45,14 +45,165 @@
     transform: scale(1.1);
 }
 
-/* Animación sutil para que el modal no aparezca de golpe */
+/* Animación para el modal  */
 @keyframes modalFadeIn {
     from {
         opacity: 0;
-        transform: translateY(20px) scale(0.95);
+        transform: translateY(10px) scale(0.95);
     }
     to {
         opacity: 1;
         transform: translateY(0) scale(1);
     }
+}
+
+
+
+
+
+
+
+
+
+/* --- ESTILOS DE ROLE SELECT --- */
+.role-select-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 1rem 0;
+}
+
+.role-header h2 {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: #1a1a1a;
+    margin-bottom: 0.5rem;
+}
+
+.role-header p {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 2.5rem;
+}
+
+.role-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    width: 100%;
+    margin-bottom: 2.5rem;
+}
+
+/* La tarjeta base */
+.role-card {
+    position: relative;
+    border: 1.5px solid #eaeaea;
+    border-radius: 16px;
+    padding: 2rem 1rem 1.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: #ffffff;
+}
+
+.role-card:hover {
+    border-color: #d4a347;
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(182, 136, 38, 0.08);
+}
+
+/* La tarjeta cuando está seleccionada*/
+.role-card.active {
+    border-color: #b68826;
+    background-color: #fcfbf8; /* fondo sutil*/
+}
+
+/* Círculo dorado que contiene el icono principal */
+.role-icon-circle {
+    width: 64px;
+    height: 64px;
+    background-color: #fcf6e5;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    color: #b68826;
+}
+
+.role-icon-circle svg {
+    width: 32px;
+    height: 32px;
+}
+
+.role-card h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #8c6314;
+    margin-bottom: 0.5rem;
+}
+
+.role-card p {
+    font-size: 0.7rem;
+    color: #888;
+    line-height: 1.4;
+    margin-bottom: 1.5rem;
+    flex-grow: 1; /* Empuja el check inferior hacia abajo */
+}
+
+/* El círculo del check en la parte inferior */
+.role-check-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #b68826;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.2; /* Gris apagado por defecto */
+    transition: opacity 0.3s ease;
+}
+
+.role-card.active .role-check-circle {
+    opacity: 1; /* Se enciende en dorado */
+}
+
+.role-check-circle svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* El checkmark que puentea el borde superior derecho */
+.role-badge-active {
+    position: absolute;
+    top: -12px;
+    right: -12px;
+    width: 28px;
+    height: 28px;
+    background-color: #b68826;
+    border: 3px solid #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.role-badge-active svg {
+    width: 14px;
+    height: 14px;
+}
+
+.role-footer-text {
+    font-size: 0.75rem;
+    color: #999;
+}
+
+@keyframes popIn {
+    0% { transform: scale(0); }
+    100% { transform: scale(1); }
 }

@@ -1,10 +1,6 @@
 import './Home.css';
 
-
-
-
-
-export default function Home({ onNavigate }) {
+export default function Home({ onNavigate, onOpenModal }) {
     const handleCtaClick = (e, action) => {
         e.preventDefault();
         if (onNavigate) {
@@ -56,7 +52,10 @@ export default function Home({ onNavigate }) {
                         <a
                             href="#comenzar"
                             className="btn btn-primary"
-                            onClick={(e) => handleCtaClick(e, 'comenzar')}
+                            onClick={(e) => {
+                                e.preventDefault(); 
+                                onOpenModal(); // Abre el modal "Quién eres?"
+                            }}
                         >
                             <svg
                                 className="btn-icon"

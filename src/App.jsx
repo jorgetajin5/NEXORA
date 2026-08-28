@@ -48,8 +48,9 @@ function App() {
   // 2. Creamos esta función para manejar qué componente mostrar
   const renderContent = () => {
     if (activePage === 'inicio') {
-      return <Home onNavigate={handleNavigate} />;
+      return <Home onNavigate={handleNavigate} onOpenModal = {openAuthModal} />;
     }
+    
     if (activePage === 'acerca') { // <-- Validamos el ID exacto que usa tu Navbar
       return <AcercaDe />;
     }
