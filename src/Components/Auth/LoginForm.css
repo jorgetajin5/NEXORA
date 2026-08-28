@@ -233,3 +233,14 @@
     font-weight: 700;
     text-decoration: none;
 }
+
+.error-message {
+    background-color: #fee2e2;
+    color: #b91c1c;
+    padding: 0.7rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+    text-align: center;
+    border: 1px solid #f87171;
+}
