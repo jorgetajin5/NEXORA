@@ -2,6 +2,7 @@ import React from 'react';
 import { signOut } from 'firebase/auth';
 import { auth } from '../../firebase';
 import './Dashboard.css';
+import UnderConstruction from '../../pages/UnderConstruction/UnderConstruction';
 
 
 export default function Dashboard() {
@@ -56,8 +57,8 @@ export default function Dashboard() {
 
                 {/* Área de contenido dinámico */}
                 <section className="dashboard-content">
-                    <h1>🚧 Panel en construcción 🚧</h1>
-                    <p>Próximamente: Publicaciones, calendario y mensajes.</p>
+                    
+                    <UnderConstruction pageId="dashboard" />
                 </section>
                 
             </main>
