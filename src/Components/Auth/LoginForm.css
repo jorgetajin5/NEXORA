@@ -193,9 +193,19 @@
     font-size: 0.75rem;
 }
 
+/* alinear ambos botones en la misma fila */
+.social-buttons-container {
+    display: flex;
+    flex-direction: row;
+    gap: .9rem; /* Separación entre el botón de Google y Microsoft */
+    width: 100%;
+    justify-content: center;
+}
+
 .btn-social-login {
-    width: 45%;
-    margin: 0 auto;
+     /* width: 100%; */
+    /* margin: 0 auto;  */
+    flex: 1;
     padding: 0.5rem;
     border: 1px solid #e0e0e0;
     border-radius: 999px;
@@ -220,6 +230,8 @@
     background-color: #f9f9f9;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
 }
+
+
 
 .register-footer {
     text-align: center;
