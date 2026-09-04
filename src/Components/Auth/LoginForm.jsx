@@ -5,6 +5,7 @@ import { auth } from '../../firebase';
 
 import './LoginForm.css'; //estilos del formulario
 import Dashboard from '../Dashboard/Dashboard';
+import { microsoftProvider } from '../../firebase';
 
 
 
@@ -93,8 +94,33 @@ export default function LoginForm({ role, onBack, onLoginSuccess }) {
                 return; // se ignora error.
             }
             setErrorMsg('Ocurrió un error al conectar con Google.');
+            console.error("Error al iniciar sesión con Google: ", error.message);
         }
     };
+
+
+    //Función para autenticación con Microsoft
+    const handleMicrosoftLogin = async () => {
+        try{
+            const result = await signInWithPopup(auth, microsoftProvider);
+            const user = result.user;
+
+            console.log("Inicio de seción exitoso con Microsoft", user.email);
+
+            // redirigir al Dashboard
+            if (onLoginSuccess) onLoginSuccess(result.user);
+
+        } catch (error) {
+            console.error("Error de Firebase con Google:", error.code);
+            // Controla si el usuario cierra la ventana antes de terminar
+            if (error.code === 'auth/popup-closed-by-user') {
+                return; // se ignora error.
+            }
+            setErrorMsg('Ocurrió un error al conectar con Microsoft.');
+            console.error("Error al iniciar sesión con Microsoft: ", error.message);
+        }
+    }
+
 
     // Función para enviar el correo de recuperación
     const handlePasswordReset = async (e) => {
@@ -103,7 +129,7 @@ export default function LoginForm({ role, onBack, onLoginSuccess }) {
         setResetSuccess(false);
 
         if (!email) {
-            setErrorMsg('Por favor, ingresa tu correo electrónico para recuperarla.');
+            setErrorMsg('Por favor, ingrese su correo electrónico para recuperarla.');
             return;
         }
 
@@ -145,8 +171,6 @@ export default function LoginForm({ role, onBack, onLoginSuccess }) {
         <div className="login-layout">
 
             {/* PANEL IZQUIERDO */}
-
-
             <div className="login-left-panel">
                 {/* Botón para regresar a la selección de rol */}
                 <button className="back-btn" onClick={onBack}>
@@ -215,8 +239,6 @@ export default function LoginForm({ role, onBack, onLoginSuccess }) {
 
 
                     /* sino:  muestra el formulario normal de Login/Registro */
-
-
                     <>
 
                         <form className="login-form" onSubmit={handleSubmit}>
@@ -325,7 +347,7 @@ export default function LoginForm({ role, onBack, onLoginSuccess }) {
                                 <span>Google</span>
                             </button>
 
-                            <button type="button" className="btn-social-login">
+                            <button type="button" className="btn-social-login" onClick={handleMicrosoftLogin}>
                                 <svg className="social-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <rect x="1.5" y="1.5" width="10" height="10" fill="#f25022" />
                                     <rect x="12.5" y="1.5" width="10" height="10" fill="#7fba00" />
