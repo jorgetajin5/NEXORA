@@ -76,16 +76,9 @@ export default function Dashboard( { firebaseUser } ) {
                     </div>
 
                     <button 
+                        className='btn-logout'
                         onClick={handleLogout} 
-                        style={{
-                            padding: '0.5rem 1rem',
-                            backgroundColor: '#fee2e2',
-                            color: '#b91c1c',
-                            border: '1px solid #f87171',
-                            borderRadius: '8px',
-                            cursor: 'pointer',
-                            fontWeight: 'bold'
-                        }}
+                        
                     >
                         Cerrar sesión
                     </button>
@@ -95,7 +88,7 @@ export default function Dashboard( { firebaseUser } ) {
 
                 {/* Área de contenido dinámico */}
                 <section className="dashboard-content">
-                    <h2>¡Hola, {userProfile?.firstname || userProfile?.firstName}!</h2>
+                    {/* <h2>¡Hola, {userProfile?.firstname || userProfile?.firstName}!</h2> */}
                     <UnderConstruction pageId="dashboard" />
                 </section>
                 
