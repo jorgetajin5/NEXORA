@@ -6,6 +6,7 @@ import { auth } from '../../firebase';
 import './LoginForm.css'; //estilos del formulario
 import Dashboard from '../Dashboard/Dashboard';
 import { microsoftProvider } from '../../firebase';
+import firebase from 'firebase/compat/app';
 
 
 
@@ -22,6 +23,27 @@ export default function LoginForm({ role, onBack, onLoginSuccess }) {
 
     const [isRegistering, setIsRegistering] = useState(false); // Falso = Login, Verdadero = Registro
     const [errorMsg, setErrorMsg] = useState('');
+
+    // Sincronización con firebase y postgreSQL
+    const syncUserToBackend = async (firebaseUser) => {
+        try {
+            await fetch('http://localhost:3000/api/users', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    uid: firebaseUser.uid,
+                    firstName: firebaseUser.displayName || name || 'Usuario',
+                    email: firebaseUser.email,
+                    rol: role
+                })
+            });
+            console.log("Datos sincronizados con PostgreSQL");
+
+        } catch (error) {
+            console.error("Error contactando al servidor PostGreSQL:", error);
+        }
+    };
+
 
     //Diccionario de seleccion
     const roleLabels = {
@@ -51,7 +73,12 @@ export default function LoginForm({ role, onBack, onLoginSuccess }) {
                     displayName: name
                 });
 
-                console.log("Usuario registrado exitosamente:", userCredential.user);
+                // console.log("Usuario registrado exitosamente:", userCredential.user);
+                console.log("Usuario registrado exitosamente.");
+
+                // sincronizacion de datos con el backend
+                await syncUserToBackend(userCredential.user);
+
                 // >>> redirigir al panel de control (Dashboard)
                 if (onLoginSuccess) onLoginSuccess(userCredential.user);
 
@@ -80,12 +107,15 @@ export default function LoginForm({ role, onBack, onLoginSuccess }) {
         const provider = new GoogleAuthProvider();
 
         try {
-            const result = await signInWithPopup(auth, provider);
+            const userCredential = await signInWithPopup(auth, provider);
             console.log("Autenticación con Google exitosa:");
             //console.log("Autenticación con Google exitosa:", result.user);
 
+            // sincronizacion de datos con el backend
+            await syncUserToBackend(userCredential.user);
+
             // redirigir al Dashboard
-            if (onLoginSuccess) onLoginSuccess(result.user);
+            if (onLoginSuccess) onLoginSuccess(userCredential.user);
 
         } catch (error) {
             console.error("Error de Firebase con Google:", error.code);
@@ -102,13 +132,16 @@ export default function LoginForm({ role, onBack, onLoginSuccess }) {
     //Función para autenticación con Microsoft
     const handleMicrosoftLogin = async () => {
         try{
-            const result = await signInWithPopup(auth, microsoftProvider);
-            const user = result.user;
+            const userCredential = await signInWithPopup(auth, microsoftProvider);
+            const user = userCredential.user;
 
             console.log("Inicio de seción exitoso con Microsoft", user.email);
 
+            // sincronizacion de datos con el backend
+            await syncUserToBackend(userCredential.user);
+
             // redirigir al Dashboard
-            if (onLoginSuccess) onLoginSuccess(result.user);
+            if (onLoginSuccess) onLoginSuccess(userCredential.user);
 
         } catch (error) {
             console.error("Error de Firebase con Google:", error.code);
