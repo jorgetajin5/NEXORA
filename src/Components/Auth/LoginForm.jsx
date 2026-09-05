@@ -24,10 +24,14 @@ export default function LoginForm({ role, onBack, onLoginSuccess }) {
     const [isRegistering, setIsRegistering] = useState(false); // Falso = Login, Verdadero = Registro
     const [errorMsg, setErrorMsg] = useState('');
 
+
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
     // Sincronización con firebase y postgreSQL
     const syncUserToBackend = async (firebaseUser) => {
         try {
-            await fetch('http://localhost:3000/api/users', {
+            // await fetch('http://localhost:3000/api/users', {
+            await fetch(`${API_URL}/api/users`,{
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
