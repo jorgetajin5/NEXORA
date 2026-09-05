@@ -94,7 +94,7 @@ function App() {
 
   // condicional: si hay usuario, muestra solo el DASHBOARD
   if (user) {
-    return <Dashboard />;
+    return <Dashboard firebaseUser = {user} />;
   }
 
   // si no hay usuario, muestra la landingPage

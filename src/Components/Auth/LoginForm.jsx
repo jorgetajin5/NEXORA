@@ -87,6 +87,10 @@ export default function LoginForm({ role, onBack, onLoginSuccess }) {
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
                 console.log("Inicio de sesión exitoso:");
                 // console.log("Inicio de sesión exitoso:", userCredential.user);
+
+                // sincronizacion de datos con el backend
+                await syncUserToBackend(userCredential.user);
+
                 // redirigir a Dashboard
                 if (onLoginSuccess) onLoginSuccess(userCredential.user);
             }
