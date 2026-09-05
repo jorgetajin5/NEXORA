@@ -86,7 +86,7 @@ function App() {
   if (loadingAuth) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', backgroundColor: '#fdfaf2', color: '#ffeabb' }}>
-        <h2>Cargando...</h2>
+        {/* <h2>Cargando...</h2> */}        
       </div>
     );
   }
