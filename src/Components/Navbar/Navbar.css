@@ -180,6 +180,37 @@
     transform: translateY(-7px) rotate(-45deg);
 }
 
+/* esquina superior derecha fija */
+.navbar-hamburger.active {
+    position: fixed;
+    top: 1.5rem;
+    right: 1.5rem;
+}
+
+/* lineas oscuras finas*/
+.navbar-hamburger.active .bar {
+    background-color: #1a1a1a; 
+    height: 1.5px; 
+}
+
+/* Overlay oscuro para version movil */
+.navbar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5); /* Color negro al 50% de transparencia */
+    z-index: 54; 
+    animation: fadeInOverlay 0.3s ease-out forwards;
+}
+
+@keyframes fadeInOverlay {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+
 /* Responsive */
 @media (max-width: 991px) {
     .navbar-container {
@@ -200,7 +231,8 @@
         right: -100%;
         width: 280px;
         height: 100vh;
-        background-color: var(--color-bg-page);
+        /* background-color: var(--color-bg-page); */
+        background-color: #ffffff;
         box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
         flex-direction: column;
         justify-content: flex-start;
@@ -229,10 +261,20 @@
         font-size: 1.15rem;
         width: 100%;
         align-items: flex-start;
+        color: #4a5568;
+        padding: 0.5rem 0;
     }
 
+    .navbar-link.active {
+        color: var(--color-primary-gold); /* O puedes usar #927519 directamente */
+    }
+
+    /* linea dorada */
     .nav-indicator {
-        bottom: -4px;
-        width: 40px;
+        bottom: -8px;
+        width: 50px;
+        left: 0; /*anclado izquierda */
+        height: 3px;
+
     }
 }

@@ -1,6 +1,8 @@
 /* --- ESTILOS DE LOGIN FORM --- */
 .login-layout {
     display: flex;
+    flex-direction: row;
+    width: 100%;
     min-height: 550px;
 }
 
@@ -255,4 +257,54 @@
     margin-bottom: 1rem;
     text-align: center;
     border: 1px solid #f87171;
+}
+
+
+/* responsividad para el login */
+@media (max-width: 768px) {
+    .login-layout {
+        flex-direction: column;
+        min-height: auto;
+    }
+
+    .login-left-panel {
+        flex: none;
+        width: 100%;
+        padding: 1.5rem 1.5rem 0 1.5rem;
+        background: transparent;
+    }
+
+    .login-illustrations, .left-panel-title {
+        display: none;
+    }
+
+    .back-btn {
+        margin-bottom: 0;
+    }
+
+    .login-right-panel {
+        /* padding: 1rem 1.5rem 2.5rem 1.5rem; */
+    }
+
+    .login-right-panel {
+        padding: 4rem 2rem;
+    }
+
+    .back-btn {
+        margin-bottom: 0rem;
+    }
+
+    .social-buttons-container {
+        gap: 0.5rem;
+    }
+
+    .btn-social-login {
+        font-size: 0.75rem;
+    }
+
+    .login-header-form {
+        text-align: center;
+        width: 100%;
+        /* margin-bottom: 1.5rem; */
+    }
 }

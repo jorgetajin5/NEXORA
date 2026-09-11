@@ -64,6 +64,10 @@ export default function Navbar({ activePage = 'inicio', onNavigate }) {
                     <span className="bar"></span>
                 </button>
 
+                {mobileMenuOpen && (
+                    <div className="navbar-overlay" onClick={() => setMobileMenuOpen(false)}></div>
+                )}
+
                 <nav className={`navbar-nav ${mobileMenuOpen ? 'open' : ''}`}>
                     <ul className="navbar-links">
                         {navItems.map((item) => {

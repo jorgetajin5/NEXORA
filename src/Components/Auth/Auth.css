@@ -218,3 +218,40 @@
     0% { transform: scale(0); }
     100% { transform: scale(1); }
 }
+
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    .role-select-container {
+        padding: 2rem 1.25rem;
+    }
+
+    .role-header p {
+        margin-bottom: 1.5rem;
+    }
+
+    /* .role-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    } */
+
+    .role-card {
+        padding: 1.5rem 1rem 1rem 1rem;
+    }
+
+    /* .role-icon-circle {
+        width: 54px;
+        height: 54px;
+        margin-bottom: 0.75rem;
+    }
+
+    .role-icon-circle svg {
+        width: 26px;
+        height: 26px;
+    } */
+}
