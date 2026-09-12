@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 // herramientas de Firebase
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail, sendEmailVerification } from 'firebase/auth';
 import { auth } from '../../firebase';
 
 import './LoginForm.css'; //estilos del formulario
@@ -24,6 +24,9 @@ export default function LoginForm({ role, onBack, onLoginSuccess }) {
     const [isRegistering, setIsRegistering] = useState(false); // Falso = Login, Verdadero = Registro
     const [errorMsg, setErrorMsg] = useState('');
 
+    //estado mensaje de validación de correo electronico
+    const [successMsg, setSuccesMsg] = useState('');
+
 
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
@@ -31,7 +34,7 @@ export default function LoginForm({ role, onBack, onLoginSuccess }) {
     const syncUserToBackend = async (firebaseUser) => {
         try {
             // await fetch('http://localhost:3000/api/users', {
-            await fetch(`${API_URL}/api/users`,{
+            await fetch(`${API_URL}/api/users`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -60,6 +63,7 @@ export default function LoginForm({ role, onBack, onLoginSuccess }) {
     const handleSubmit = async (e) => {
         e.preventDefault(); // Evita que la página se recargue
         setErrorMsg(''); // Limpia errores previos
+        setSuccesMsg(''); // Limpia mensaje exito previo
 
         // valida la contraseña antes de enviar a Firebase
         if (isRegistering && password !== confirmPassword) {
@@ -73,30 +77,52 @@ export default function LoginForm({ role, onBack, onLoginSuccess }) {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 
                 // guarda el nombre en el perfil del usuario de Firebase
-                await updateProfile(userCredential.user, {
-                    displayName: name
-                });
+                await updateProfile(userCredential.user, { displayName: name });
 
-                // console.log("Usuario registrado exitosamente:", userCredential.user);
-                console.log("Usuario registrado exitosamente.");
-
-                // sincronizacion de datos con el backend
+                // envio de codigo de verificacion
+                await sendEmailVerification(userCredential.user);
                 await syncUserToBackend(userCredential.user);
 
-                // >>> redirigir al panel de control (Dashboard)
-                if (onLoginSuccess) onLoginSuccess(userCredential.user);
+                //cierra sesion inmediatamente para forzar validacion
+                await auth.signOut();
+
+                setIsRegistering(false);
+                setSuccesMsg('Registro exitoso. Verifique su correo para iniciar sesión.')
+                setPassword('');
+                setConfirmPassword('');
+
+
+                // // console.log("Usuario registrado exitosamente:", userCredential.user);
+                // console.log("Usuario registrado exitosamente.");
+
+                // // sincronizacion de datos con el backend
+                // await syncUserToBackend(userCredential.user);
+
+                // // >>> redirigir al panel de control (Dashboard)
+                // if (onLoginSuccess) onLoginSuccess(userCredential.user);
 
             } else {
                 // Modo Login
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                console.log("Inicio de sesión exitoso:");
-                // console.log("Inicio de sesión exitoso:", userCredential.user);
 
-                // sincronizacion de datos con el backend
+                // valida si ya valido cuenta desde su correo
+                if (!userCredential.user.emailVerified) {
+                    await auth.signOut(); //Si no esta verificado
+                    setErrorMsg('La cuenta no está verificada. Revise su correo electrónico.');
+                    return;
+                }
+
                 await syncUserToBackend(userCredential.user);
-
-                // redirigir a Dashboard
                 if (onLoginSuccess) onLoginSuccess(userCredential.user);
+
+                // console.log("Inicio de sesión exitoso:");
+                // // console.log("Inicio de sesión exitoso:", userCredential.user);
+
+                // // sincronizacion de datos con el backend
+                // await syncUserToBackend(userCredential.user);
+
+                // // redirigir a Dashboard
+                // if (onLoginSuccess) onLoginSuccess(userCredential.user);
             }
         } catch (error) {
             console.error("Error de Firebase:", error.code);
@@ -139,7 +165,7 @@ export default function LoginForm({ role, onBack, onLoginSuccess }) {
 
     //Función para autenticación con Microsoft
     const handleMicrosoftLogin = async () => {
-        try{
+        try {
             const userCredential = await signInWithPopup(auth, microsoftProvider);
             const user = userCredential.user;
 
@@ -192,6 +218,7 @@ export default function LoginForm({ role, onBack, onLoginSuccess }) {
         setIsForgotPassword(!isForgotPassword);
         setErrorMsg('');
         setResetSuccess(false);
+        setSuccesMsg('');
     };
 
 
@@ -201,6 +228,7 @@ export default function LoginForm({ role, onBack, onLoginSuccess }) {
         e.preventDefault();
         setIsRegistering(!isRegistering);
         setErrorMsg('');
+        setSuccesMsg('');
         // limpia los campos al cambiar de vista
         setName('');
         setPassword('');
@@ -236,8 +264,7 @@ export default function LoginForm({ role, onBack, onLoginSuccess }) {
                     </h2>
                 </div>
 
-                {/* Muestra mensaje de error si existe */}
-                {errorMsg && <div className="error-message">{errorMsg}</div>}
+                
 
 
                 {/* Mensaje de éxito ( si el correo se envió) */}
@@ -248,7 +275,16 @@ export default function LoginForm({ role, onBack, onLoginSuccess }) {
                 )}
 
 
+                {successMsg && (
+                    <div style={{ backgroundColor: '#dcfce7', color: '#166534', padding: '0.7rem', borderRadius: '8px', fontSize: '0.8rem', marginBottom: '1rem', textAlign: 'center', border: '1px solid #86efac' }}>
+                        {successMsg}
+                    </div>
+                )}
 
+
+                {/* Muestra mensaje de error si existe */}
+                {errorMsg && <div className="error-message">{errorMsg}</div>}
+                
 
                 {/* condiciona: si está en modo recuperación */}
                 {isForgotPassword ? (

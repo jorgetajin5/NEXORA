@@ -73,6 +73,16 @@ function App() {
   // Observador de sesión de Firebase
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+
+
+      // verifica si el usuario se registro pero no esta verificado.
+      if (currentUser && !currentUser.emailVerified && currentUser.providerData.some(p => p.providerId === 'password')) {
+        setUser(null); // Evita que se monte el Dashboard
+        setLoadingAuth(false);
+        return; //detiene la ejecución
+      }
+
+      // si esta verificado 
       setUser(currentUser); // Si hay sesión, guarda los datos; si no, guarda null
       setLoadingAuth(false); // Termina la validación
     });
