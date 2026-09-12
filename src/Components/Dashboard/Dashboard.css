@@ -7,14 +7,14 @@
 }
 
 /* Panel izquierdo */
-.dashboard-sidebar {
+/* .dashboard-sidebar {
     width: 250px;
     background-color: #fcf6e5;
     border-right: 1px solid #f0e6d2;
     padding: 2rem 1.5rem;
     display: flex;
     flex-direction: column;
-}
+} */
 
 /* Panel derecho */
 .dashboard-main {
@@ -69,4 +69,14 @@
 .btn-logout:hover {
     background-color: #fca5a5;
     color: #991b1b;
+}
+
+@media (max-width: 768px) {
+    .dashboard-topbar {
+        padding: 1rem;
+    }
+
+    .dashboard-content {
+        padding: 1rem 1rem 1rem 1rem;
+    }
 }

@@ -3,12 +3,20 @@ import { signOut } from 'firebase/auth';
 import { auth } from '../../firebase';
 import './Dashboard.css';
 import UnderConstruction from '../../pages/UnderConstruction/UnderConstruction';
+import Sidebar from './Sidebar/Sidebar';
+import TopBar from './TopBar/TopBar';
 
 
 export default function Dashboard( { firebaseUser } ) {
 
     const [userProfile, setUserProfile ] = useState(null);
     const [loading, setLoading] = useState(true);
+
+    // estado para controlar el menu movil
+    const [isMobileOpen, setIsMobileMenuOpen] = useState(false);
+    const handleOpenMobileMenu = () => setIsMobileMenuOpen(true);
+    const handleCloseMobileMenu = () => setIsMobileMenuOpen(false);
+
 
     // URL dinámica, nube y local
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
@@ -61,17 +69,22 @@ export default function Dashboard( { firebaseUser } ) {
         <div className="dashboard-layout">
             
             {/* Panel izquierdo navegacion menu*/}
-            <aside className="dashboard-sidebar">
-                <h2>Aula conectada</h2>
-                <p>Evolución del aula digital</p>
-                {/* componente <Sidebar /> */}
-            </aside>
-
+            <Sidebar
+                isMobileOpen={isMobileOpen}
+                onCloseMobile={handleCloseMobileMenu}
+            />
+        
             {/* Panel derecho publicaciones */}
             <main className="dashboard-main">
+
+                <TopBar 
+                    userProfile={userProfile} 
+                    onLogout={handleLogout} 
+                    onOpenMobileMenu={handleOpenMobileMenu}
+                    />
                 
-                {/* Encabezado superior */}
-                <header className="dashboard-topbar">
+                
+                {/* <header className="dashboard-topbar">
                     <div className="user-profile">
                         <div className="avatar-placeholder"></div>
                         <span>
@@ -88,8 +101,8 @@ export default function Dashboard( { firebaseUser } ) {
                         Cerrar sesión
                     </button>
 
-                    {/* pestañas de navegación */}
-                </header>
+                    
+                </header> */}
 
                 {/* Área de contenido dinámico */}
                 <section className="dashboard-content">

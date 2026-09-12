@@ -1,0 +1,270 @@
+.topbar-container {
+    display: flex;
+    flex-direction: column;
+    background-color: #ffffff;
+    padding: 1.5rem 3rem 0 3rem; /* las pestañas toquen el borde */
+    border-bottom: 1px solid #f0e6d2;
+}
+
+/* FILA SUPERIOR*/
+.topbar-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+/* PERFIL IZQUIERDO */
+.topbar-user-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.avatar-large {
+    width: 52px;
+    height: 52px;
+    background-color: #e2e8f0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.user-text {
+    font-size: 1.05rem;
+    color: #4b5563;
+}
+
+.user-text strong {
+    font-weight: 800;
+    color: #111827;
+}
+
+/* ACCIONES DERECHA */
+.topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.icon-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #4b5563;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-btn svg {
+    width: 22px;
+    height: 22px;
+}
+
+.btn-notification {
+    position: relative;
+}
+
+.notification-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background-color: #d49a1c;
+    color: white;
+    font-size: 0.65rem;
+    font-weight: bold;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid white;
+}
+
+.profile-menu {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.avatar-small {
+    width: 50px;
+    height: 50px;
+    background-color: #e2e8f0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+}
+
+
+.chevron-icon {
+    width: 16px;
+    height: 16px;
+    color: #6b7280;
+}
+
+.btn-logout-small {
+    padding: 0.4rem 0.8rem;
+    background-color: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid #fca5a5;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.8rem;
+    transition: background-color 0.2s;
+}
+
+.btn-logout-small:hover {
+    background-color: #fecaca;
+}
+
+/* PESTAÑAS FILA INFERIOR */
+.topbar-tabs {
+    display: flex;
+    gap: 2.5rem;
+}
+
+.tab {
+    background: transparent;
+    border: none;
+    padding: 0.5rem 0 1rem 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #6b7280;
+    cursor: pointer;
+    position: relative;
+    transition: color 0.2s;
+}
+
+.tab:hover {
+    color: #111827;
+}
+
+.tab.active {
+    color: #111827;
+}
+
+.tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: #d49a1c;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+}
+
+.topbar-icon {
+    width: 30px;
+    height: 30px;
+    vertical-align: middle;
+}
+
+.menu-mobile-btn {
+    display: none;
+    background: transparent;
+    border: none;
+    color: #4b5563;
+    cursor: pointer;
+    padding: 0;
+}
+
+@media (max-width: 768px) {
+    .topbar-container {
+        padding: 1rem 1rem 0 1rem;
+    }
+
+    .topbar-icon {
+        width: 18px;
+        height: 18px;
+    }
+
+    .topbar-main {
+        margin-bottom: 1rem;
+        gap: 0.5rem;
+    }
+
+    .avatar-large {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+    
+    .user-text {
+        font-size: 0.8rem;
+    }
+
+    .topbar-user-info {
+        gap: 0.6rem;
+    }
+
+    .topbar-actions {
+        gap: 0.8rem;
+    }
+
+    .avatar-small {
+        width: 35px;
+        height: 35px;
+    }
+
+    .topbar-icon {
+        width: 20px;
+        height: 20px;
+    }
+
+    .topbar-tabs {
+        gap: 1.2rem;
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 2px;
+        scrollbar-width: none; /* oculta barra firefox*/
+    }
+
+    /* oculta barra en Chrome, etc */
+    .topbar-tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .tab {
+        font-size: 0.8rem;
+        padding: 0.5rem 0 0.8rem 0;
+    }
+
+    .menu-mobile-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 10px;
+    }
+    
+
+
+}
+/* 
+.btn-logout-small {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #666; 
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+} */
+/* 
+.btn-logout:hover {
+    color: #d32f2f; 
+    background-color: #ffebee;
+} */

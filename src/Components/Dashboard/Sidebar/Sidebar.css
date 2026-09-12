@@ -1,0 +1,210 @@
+/* CONTENEDOR PRINCIPAL DEL SIDEBAR */
+.sidebar-container {
+    width: 260px;
+    height: 100vh;
+    background-color: #fdfaf2;
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem;
+    overflow-y: auto;
+    border-right: 1px solid #f0e6d2;
+    transition: left 0.3s ease;
+}
+
+/* Oculta barra de scroll */
+.sidebar-container::-webkit-scrollbar {
+    width: 0;
+    background: transparent;
+}
+
+/* HEADER Y LOGO  */
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+}
+
+.brand-icon-wrapper {
+    font-size: 2rem;
+    color: #b68826;
+}
+
+.brand-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.brand-text h2 {
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: #1a1a1a;
+    margin: 0;
+    line-height: 1.1;
+}
+
+.brand-text p {
+    font-size: 0.65rem;
+    color: #666;
+    margin: 0;
+}
+
+/* BOTON UNETE A UNA CLASE*/
+.btn-join-class {
+    width: 100%;
+    background-color: #d49a1c;
+    color: white;
+    border: none;
+    padding: 0.8rem;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    margin-bottom: 2rem;
+    transition: background-color 0.2s, transform 0.2s;
+    box-shadow: 0 4px 10px rgba(212, 154, 28, 0.3);
+}
+
+.btn-join-class:hover {
+    background-color: #b68826;
+    transform: translateY(-2px);
+}
+
+.join-icon {
+    width: 18px;
+    height: 18px;
+}
+
+/* MENU DE NAVEGACION */
+.sidebar-nav {
+    flex-grow: 1;
+}
+
+.sidebar-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.sidebar-nav li a {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.8rem 1rem;
+    text-decoration: none;
+    color: #4a4a4a;
+    font-weight: 500;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.sidebar-nav li a:hover {
+    background-color: #f5f0e1;
+}
+
+.sidebar-nav li.active a {
+    background-color: #fcf1d8;
+    color: #b68826;
+    font-weight: 700;
+}
+
+.nav-icon {
+    font-size: 1.1rem;
+    opacity: 0.7;
+}
+
+.sidebar-nav li.active .nav-icon {
+    opacity: 1;
+}
+
+/* TARJETA INFERIOR*/
+.sidebar-invite-card {
+    background-color: white;
+    border: 1px solid #f0e6d2;
+    border-radius: 12px;
+    padding: 1.5rem 1rem;
+    text-align: center;
+    margin-top: 2rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+}
+
+.invite-illustration-placeholder {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+}
+
+.sidebar-invite-card p {
+    font-size: 0.75rem;
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+}
+
+.btn-invite {
+    width: 100%;
+    background-color: transparent;
+    color: #1a73e8; 
+    border: none;
+    font-weight: 700;
+    font-size: 0.8rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    transition: color 0.2s;
+}
+
+.btn-invite:hover {
+    color: #1557b0;
+}
+
+/* RESPONSIVIDAD */
+@media (max-width: 991px) {
+    /* side bar se oculta por defecto izquierda */
+    .sidebar-container {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        z-index: 100;
+        box-shadow: 10px 0 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .sidebar-container.open {
+        left: 0;
+    }
+
+    /* Fondo transparente detras del menu*/
+    .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 99;
+    }
+}
+
+.nav-icon {
+    width: 25px;
+    height: 25px;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+.invite-icon {
+    width: 18px;
+    height: 18px;
+    margin-right: 8px;
+    vertical-align: middle;
+}
