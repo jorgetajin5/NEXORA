@@ -5,17 +5,22 @@ import './Dashboard.css';
 import UnderConstruction from '../../pages/UnderConstruction/UnderConstruction';
 import Sidebar from './Sidebar/Sidebar';
 import TopBar from './TopBar/TopBar';
+import Publications from './Views/Publications/Publications';
+import ClassView from './Views/Classes/ClassView';
 
 
-export default function Dashboard( { firebaseUser } ) {
 
-    const [userProfile, setUserProfile ] = useState(null);
+export default function Dashboard({ firebaseUser }) {
+
+    const [userProfile, setUserProfile] = useState(null);
     const [loading, setLoading] = useState(true);
 
     // estado para controlar el menu movil
     const [isMobileOpen, setIsMobileMenuOpen] = useState(false);
     const handleOpenMobileMenu = () => setIsMobileMenuOpen(true);
     const handleCloseMobileMenu = () => setIsMobileMenuOpen(false);
+
+    const [activeView, setActiveView] = useState('inicio');  // Estado para controlar vista (por defecto "inicio")
 
 
     // URL dinámica, nube y local
@@ -31,12 +36,12 @@ export default function Dashboard( { firebaseUser } ) {
 
                 const data = await response.json();
 
-                if(response.ok) {
+                if (response.ok) {
                     setUserProfile(data);
                 } else {
                     console.error("Error del servidor: ", data.error);
-                }   
-            } catch (error){
+                }
+            } catch (error) {
                 console.error("Error conectando al backend: ", error);
             } finally {
                 setLoading(false);
@@ -61,29 +66,56 @@ export default function Dashboard( { firebaseUser } ) {
         }
     };
 
+
+    const renderContent = () => {
+        switch (activeView) {
+            case 'inicio':
+                return <Publications userProfile={userProfile} />;
+            case 'clases':
+                return <ClassView pageId="clases" />;
+            case 'calendario':
+            case 'mensajes':
+                return <UnderConstruction pageId={activeView} />;
+            case 'archivos':
+                return <UnderConstruction pageId={activeView} />;
+            case 'calificaciones':
+                return <UnderConstruction pageId={activeView} />;
+            case 'notificaciones':
+                return <UnderConstruction pageId={activeView} />;
+            case 'configuracion':
+                return <UnderConstruction pageId={activeView} />;
+            default:
+                return <UnderConstruction pageId={Dashboard} />;
+        }
+    };
+
     if (loading) {
         return <div style={{ display: 'flex', height: '100vh', justifyContent: 'center', alignItems: 'center' }}>Cargando tu aula digital...</div>;
     }
 
+
     return (
         <div className="dashboard-layout">
-            
+
             {/* Panel izquierdo navegacion menu*/}
             <Sidebar
                 isMobileOpen={isMobileOpen}
                 onCloseMobile={handleCloseMobileMenu}
+
+                activeView={activeView}
+                onNavigate={setActiveView}
             />
-        
+
             {/* Panel derecho publicaciones */}
             <main className="dashboard-main">
 
-                <TopBar 
-                    userProfile={userProfile} 
-                    onLogout={handleLogout} 
+                <TopBar
+                    userProfile={userProfile}
+                    onLogout={handleLogout}
                     onOpenMobileMenu={handleOpenMobileMenu}
-                    />
-                
-                
+                />
+
+
                 {/* <header className="dashboard-topbar">
                     <div className="user-profile">
                         <div className="avatar-placeholder"></div>
@@ -107,9 +139,9 @@ export default function Dashboard( { firebaseUser } ) {
                 {/* Área de contenido dinámico */}
                 <section className="dashboard-content">
                     {/* <h2>¡Hola, {userProfile?.firstname || userProfile?.firstName}!</h2> */}
-                    <UnderConstruction pageId="dashboard" />
+                    {renderContent()}
                 </section>
-                
+
             </main>
         </div>
     );
