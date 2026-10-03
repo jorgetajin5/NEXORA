@@ -43,7 +43,7 @@ export default function Sidebar({ isMobileOpen, onCloseMobile, activeView, onNav
                 {/* Navegación principal */}
                 <nav className="sidebar-nav">
                     <ul>
-                        {/* 👇 3. Aplicamos la clase "active" dinámicamente y el evento onClick */}
+                        
                         <li className={activeView === 'inicio' ? 'active' : ''}>
                             <a href="#inicio" onClick={(e) => handleNavigation(e, 'inicio')}>
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="nav-icon" width="20" height="20">
