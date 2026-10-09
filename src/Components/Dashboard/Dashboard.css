@@ -34,6 +34,14 @@
     /* gap: 1.5rem; */
 }
 
+.dashboard-body {
+    display: flex;
+    flex: 1; 
+    overflow: hidden; /* Evita que la página completa haga scroll */
+    background-color: #fcfbf8; /* Asegura el color de fondo general*/
+}
+
+
 .user-profile {
     display: flex;
     align-items: center;
@@ -52,6 +60,13 @@
     flex: 1;
     padding: 2rem 3rem;
     overflow-y: auto; /* scroll solo en el contenido */
+    scrollbar-width: none;  /* oculta el scroll*/
+}
+
+/* Oculta la barra en Chrome, Safari y Edge */
+.dashboard-content::-webkit-scrollbar {
+    width: 0;
+    background: transparent;
 }
 
 .btn-logout {

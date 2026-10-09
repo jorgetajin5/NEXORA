@@ -1,13 +1,17 @@
 import React from 'react';
 import './TopBar.css';
 
-export default function TopBar({ userProfile, onLogout, onOpenMobileMenu }) {
+export default function TopBar({ userProfile, onLogout, onOpenMobileMenu, activeView }) {
     // Formatea el rol y el nombre completo asegurando que existan
     const role = userProfile?.rol ? userProfile.rol.charAt(0).toUpperCase() + userProfile.rol.slice(1) : 'Usuario';
     const fullName = `${userProfile?.firstname || userProfile?.firstName || ''} ${userProfile?.lastname || userProfile?.lastName || ''}`.trim();
 
+    const sidebarViews = ['inicio', 'clases', 'calendario', 'mensajes', 'archivos', 'calificaciones', 'notificaciones', 'configuracion'];
+
+    const showTabs = !sidebarViews.includes(activeView);
+
     return (
-        <header className="topbar-container">
+        <header className={`topbar-container ${!showTabs ? 'no-tabs' : ''}`}>
             {/* Perfil e iconos*/}
             <div className="topbar-main">
 
@@ -64,17 +68,20 @@ export default function TopBar({ userProfile, onLogout, onOpenMobileMenu }) {
                     </button>
                 </div>
 
-                
+
             </div>
-            
+
 
             {/* Fila inferior, pestañas*/}
-            <nav className="topbar-tabs">
-                <button className="tab active">Publicaciones</button>
-                <button className="tab">Clase</button>
-                <button className="tab">Mensajes</button>
-                <button className="tab">Calendario</button>
-            </nav>
+
+            {showTabs && (
+                <nav className="topbar-tabs">
+                    <button className="tab active">Publicaciones</button>
+                    <button className="tab">Clase</button>
+                    <button className="tab">Mensajes</button>
+                    <button className="tab">Calendario</button>
+                </nav>
+            )}
         </header>
     );
 }

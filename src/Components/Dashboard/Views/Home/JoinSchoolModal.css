@@ -1,0 +1,436 @@
+/* --- OVERLAY Y CONTENEDOR PRINCIPAL --- */
+.jsm-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.45);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+.jsm-content {
+    background-color: #ffffff;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 900px;
+    height: 600px;
+    display: flex;
+    position: relative;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    animation: modalFadeIn 0.3s ease-out forwards;
+}
+
+.jsm-close-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #64748b;
+    cursor: pointer;
+    z-index: 10;
+    padding: 5px;
+}
+
+/* --- PANEL IZQUIERDO --- */
+.jsm-left-panel {
+    flex: 0 0 35%;
+    background-color: #fcfbf8; /* Beige muy suave */
+    padding: 3rem 2.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    border-right: 1px solid #f1f5f9;
+}
+
+.jsm-icon-wrapper {
+    width: 80px;
+    height: 80px;
+    background-color: #fef3c7;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 3rem;
+    margin-bottom: 1.5rem;
+}
+
+.jsm-title {
+    font-size: 1.4rem;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+    font-weight: 800;
+}
+
+.jsm-description {
+    font-size: 0.85rem;
+    color: #64748b;
+    line-height: 1.5;
+    margin-bottom: 2.5rem;
+}
+
+/* Stepper */
+.jsm-stepper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    gap: 1.5rem;
+    margin-bottom: auto;
+    padding-left: 1rem;
+}
+
+.jsm-step {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    position: relative;
+}
+
+.jsm-step-indicator {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: #f1f5f9;
+    color: #64748b;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    z-index: 2;
+}
+
+.jsm-step-text {
+    font-size: 0.9rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.jsm-step.active .jsm-step-indicator {
+    background-color: #d97706;
+    color: white;
+}
+
+.jsm-step.active .jsm-step-text {
+    color: #d97706;
+    font-weight: 700;
+}
+
+.jsm-step-line {
+    position: absolute;
+    top: 28px;
+    left: 13px;
+    width: 2px;
+    height: 1.5rem;
+    background-image: linear-gradient(to bottom, #cbd5e1 50%, transparent 50%);
+    background-size: 2px 8px;
+    z-index: 1;
+}
+
+/* Info Box */
+.jsm-info-box {
+    background-color: #fef9c3;
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    gap: 0.75rem;
+    text-align: left;
+    margin-top: 2rem;
+}
+
+.jsm-info-icon {
+    color: #d97706;
+    font-weight: bold;
+}
+
+.jsm-info-box p {
+    margin: 0;
+    font-size: 0.75rem;
+    color: #854d0e;
+    line-height: 1.4;
+}
+
+/* --- PANEL DERECHO --- */
+.jsm-right-panel {
+    flex: 1;
+    padding: 3rem 4rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.jsm-right-title {
+    font-size: 1.5rem;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+    font-weight: 800;
+}
+
+.jsm-right-subtitle {
+    font-size: 0.9rem;
+    color: #64748b;
+    margin-bottom: 2rem;
+}
+
+/* Search */
+.jsm-search-wrapper {
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.jsm-search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    color: #94a3b8;
+}
+
+.jsm-search-input {
+    width: 100%;
+    padding: 0.9rem 1rem 0.9rem 2.8rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+}
+
+.jsm-search-input:focus {
+    border-color: #d97706;
+}
+
+/* Lista */
+.jsm-list-title {
+    font-size: 0.9rem;
+    color: #1e293b;
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.jsm-schools-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: auto; /* Empuja las acciones hacia abajo */
+}
+
+.jsm-school-card {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.jsm-school-card:hover {
+    border-color: #cbd5e1;
+    background-color: #f8fafc;
+}
+
+.jsm-school-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+    margin-right: 1rem;
+}
+
+.bg-yellow { background-color: #fef3c7; }
+.bg-blue { background-color: #e0f2fe; }
+.bg-green { background-color: #dcfce3; }
+
+.jsm-school-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.jsm-school-info h5 {
+    margin: 0 0 0.2rem 0;
+    font-size: 0.95rem;
+    color: #1e293b;
+}
+
+.jsm-school-info span {
+    font-size: 0.75rem;
+    color: #94a3b8;
+}
+
+.jsm-chevron {
+    color: #94a3b8;
+    font-weight: bold;
+}
+
+/* Acciones Inferiores */
+.jsm-actions {
+    display: flex;
+    justify-content: flex-start;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.jsm-btn-cancel {
+    background-color: #f1f5f9;
+    color: #475569;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.jsm-btn-continue {
+    background-color: #e2e8f0;
+    color: #94a3b8;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.jsm-btn-continue:not([disabled]) {
+    background-color: #d97706;
+    color: white;
+    cursor: pointer;
+}
+
+@keyframes modalFadeIn {
+    from { opacity: 0; transform: translateY(20px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+
+
+
+
+/*  ESTADO COMPLETADO DEL STEPPER  */
+.jsm-step.completed .jsm-step-indicator {
+    background-color: #10b981; 
+    color: white;
+}
+
+/*  TARJETA REVISIÓN (PASO 2)  */
+.jsm-review-card {
+    background-color: #f8fafc;
+    border-radius: 16px;
+    padding: 1.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid #f1f5f9;
+}
+
+.jsm-review-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.jsm-review-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.jsm-review-data {
+    display: flex;
+    flex-direction: column;
+}
+
+.jsm-review-label {
+    font-size: 0.75rem;
+    color: #64748b;
+    margin-bottom: 0.2rem;
+}
+
+.jsm-review-value {
+    font-size: 1rem;
+    color: #1e293b;
+    margin: 0;
+    font-weight: 700;
+}
+
+.jsm-review-sub {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    margin-top: 0.2rem;
+}
+
+/*  ALERTA INFORMATIVA AZUL  */
+.jsm-alert-blue {
+    background-color: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.jsm-alert-blue p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #1e40af;
+    line-height: 1.5;
+}
+
+.jsm-alert-icon {
+    font-size: 1.2rem;
+}
+
+/*  BOTONES ESPECÍFICOS DEL PASO 2  */
+.jsm-btn-text {
+    background: none;
+    border: none;
+    color: #64748b;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+}
+
+.jsm-btn-text:hover {
+    color: #0f172a;
+}
+
+.jsm-btn-primary-solid {
+    background-color: #d97706;
+    color: white;
+    border: none;
+    padding: 0.8rem 1.8rem;
+    border-radius: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.jsm-btn-primary-solid:hover:not(:disabled) {
+    background-color: #b45309;
+}
+
+.jsm-btn-primary-solid:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}

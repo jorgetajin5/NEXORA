@@ -7,7 +7,8 @@ import Sidebar from './Sidebar/Sidebar';
 import TopBar from './TopBar/TopBar';
 import Publications from './Views/Publications/Publications';
 import ClassView from './Views/Classes/ClassView';
-
+import HomeView from './Views/Home/HomeView';
+import RightPanel from './RightPanel/RightPanel';
 
 
 export default function Dashboard({ firebaseUser }) {
@@ -31,8 +32,8 @@ export default function Dashboard({ firebaseUser }) {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                //const response = await fetch(`http://localhost:3000/api/users/${firebaseUser.uid}`);
-                const response = await fetch(`${API_URL}/api/users/${firebaseUser.uid}`);
+                const response = await fetch(`http://localhost:3000/api/users/${firebaseUser.uid}`);
+                //const response = await fetch(`${API_URL}/api/users/${firebaseUser.uid}`);
 
                 const data = await response.json();
 
@@ -70,7 +71,7 @@ export default function Dashboard({ firebaseUser }) {
     const renderContent = () => {
         switch (activeView) {
             case 'inicio':
-                return <Publications userProfile={userProfile} />;
+                return <HomeView userProfile={userProfile} />;
             case 'clases':
                 return <ClassView pageId="clases" />;
             case 'calendario':
@@ -113,36 +114,26 @@ export default function Dashboard({ firebaseUser }) {
                     userProfile={userProfile}
                     onLogout={handleLogout}
                     onOpenMobileMenu={handleOpenMobileMenu}
+                    activeView={activeView}
                 />
 
 
-                {/* <header className="dashboard-topbar">
-                    <div className="user-profile">
-                        <div className="avatar-placeholder"></div>
-                        <span>
-                            <strong>{userProfile?.rol ? userProfile.rol.charAt(0).toUpperCase() + userProfile.rol.slice(1) : 'Usuario'}:</strong> 
-                            {' '}{userProfile?.firstname || userProfile?.firstName} {userProfile?.lastname || userProfile?.lastName}
-                        </span>
-                    </div>
-
-                    <button 
-                        className='btn-logout'
-                        onClick={handleLogout} 
-                        
-                    >
-                        Cerrar sesión
-                    </button>
-
-                    
-                </header> */}
 
                 {/* Área de contenido dinámico */}
+                <div className="dashboard-body">
+                
+                {/* Área de contenido dinámico (Izquierda) */}
                 <section className="dashboard-content">
-                    {/* <h2>¡Hola, {userProfile?.firstname || userProfile?.firstName}!</h2> */}
                     {renderContent()}
                 </section>
+                
+                {/* Panel Derecho */}
+                <RightPanel activeView={activeView} />
+                
+            </div>
 
             </main>
+
         </div>
     );
 }
