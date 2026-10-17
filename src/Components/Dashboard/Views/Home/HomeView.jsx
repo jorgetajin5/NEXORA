@@ -86,8 +86,8 @@ export default function HomeView({ userProfile }) {
             </div>
 
             {/* 3. Sección "Mis Clases" */}
-            <div className="hv-classes-card">
-                {/* Encabezado tarjeta */}
+            {/* <div className="hv-classes-card">
+               
                 <div className="hv-classes-header">
                     <div>
                         <h3 className="hv-classes-title">
@@ -103,10 +103,10 @@ export default function HomeView({ userProfile }) {
                             <polyline points="9 18 15 12 9 6" />
                         </svg>
                     </button>
-                </div>
+                </div> */}
 
                 {/* Estado vacío "Aún no estas en ninguna clase") */}
-                <div className="hv-empty-state">
+                {/* <div className="hv-empty-state">
 
                     <div className="hv-folder-wrapper">
                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="58" height="58">
@@ -122,12 +122,12 @@ export default function HomeView({ userProfile }) {
                         Únete a un colegio para comenzar a ver tus clases.
                     </p>
 
-                    {/* Botón secundario "Unirse a clase" */}
+                    
                     <button className="hv-btn-secondary">
                         Unirse a un colegio
                     </button>
                 </div>
-            </div>
+            </div> */}
 
 
             <JoinSchoolModal

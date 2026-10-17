@@ -306,3 +306,76 @@
     cursor: pointer;
     font-weight: bold;
 }
+
+@media (max-width: 768px) {
+    .cv-banner-create {
+        flex-direction: column;
+        text-align: center;
+        padding: 1.5rem 1.25rem;
+        gap: 1.25rem;
+        margin-bottom: 2rem;
+        box-sizing: border-box;
+    }
+
+    .cv-banner-illustration {
+        width: 140px;
+        height: auto;
+        margin: 0 auto;
+    }
+
+    .cv-banner-illustration img {
+        width: 100%;
+        height: auto;
+        object-fit: contain;
+    }
+
+    .cv-btn-create {
+        width: 100%;
+        justify-content: center;
+        box-sizing: border-box;
+    }
+
+    .cv-list-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+
+    .cv-list-actions {
+        width: 100%;
+        gap: 0.75rem;
+    }
+
+    .cv-search-box {
+        flex: 1;
+    }
+
+    .cv-search-box input {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .cv-btn-filter {
+        flex-shrink: 0;
+    }
+
+    .cv-classes-grid {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+
+    .cv-class-card {
+        padding: 1.25rem;
+    }
+
+    .cv-card-stats {
+        justify-content: space-between;
+        gap: 0.75rem;
+    }
+
+    /* MODAL: crear una nueva clase */
+
+    .cv-modal-content {
+        padding: 1.5rem;
+    }
+}

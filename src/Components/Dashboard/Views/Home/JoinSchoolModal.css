@@ -165,6 +165,9 @@
     padding: 3rem 4rem;
     display: flex;
     flex-direction: column;
+    height: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 .jsm-right-title {
@@ -220,10 +223,13 @@
 }
 
 .jsm-schools-list {
+    flex: 1;
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
     margin-bottom: auto; /* Empuja las acciones hacia abajo */
+    overflow-y: auto;
+    padding-right: 0.5rem;
 }
 
 .jsm-school-card {
@@ -433,4 +439,122 @@
 .jsm-btn-primary-solid:disabled {
     opacity: 0.7;
     cursor: not-allowed;
+}
+
+/* --- RESPONSIVIDAD DEL MODAL (Tablets y Móviles) --- */
+@media (max-width: 768px) {
+    .jsm-content {
+        flex-direction: column;
+        width: 95%;
+        height: auto;
+        max-height: 92vh;
+        overflow-y: auto;
+        border-radius: 16px;
+    }
+
+    .jsm-close-btn {
+        top: 12px;
+        right: 12px;
+    }
+
+    .jsm-left-panel {
+        flex: none;
+        width: 100%;
+        padding: 1.5rem 1.25rem 1.25rem 1.25rem;
+    }
+
+    .jsm-icon-wrapper,
+    .jsm-description,
+    .jsm-info-box {
+        display: none;
+    }
+
+    .jsm-title {
+        font-size: 1.2rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .jsm-stepper {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-start;
+        width: 100%;
+        gap: 0.5rem;
+        margin-top: 0.25rem 0 0 0 !important;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    .jsm-step {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.4rem;
+        text-align: center;
+    }
+
+    .jsm-step-text {
+        font-size: 0.75rem;
+        line-height: 1.2;
+        display: block;
+        width: 100%;
+    }
+
+    .jsm-step-line {
+        display: none;
+    }
+
+    .jsm-right-panel {
+        padding: 1.5rem 1.5rem;
+        height: auto;
+        overflow: visible;
+    }
+
+    .jsm-right-title {
+        font-size: 1.25rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .jsm-schools-list {
+        max-height: 220px;
+        margin-bottom: 1rem;
+    }
+
+    .jsm-review-card {
+        padding: 1.25rem 1rem;
+        gap: 1rem;
+    }
+
+    .jsm-review-value {
+        font-size: 0.95rem;
+        word-break: break-word;
+    }
+
+    .jsm-actions {
+        margin-top: 1.25rem;
+        align-items: center;
+        gap: 0.75rem;
+        width: 100%;
+    }
+
+    .jsm-btn-text {
+        padding: 0.6rem 0.5rem;
+        white-space: nowrap;
+    }
+
+    .jsm-alert-blue {
+        margin-bottom: 1.5rem;
+    }
+
+    .jsm-btn-cancel,
+    .jsm-btn-continue,
+    .jsm-btn-primary-solid {
+        flex: 1;
+        padding: 0.8rem 1rem;
+        text-align: center;
+        justify-content: center;
+    }
+
 }
