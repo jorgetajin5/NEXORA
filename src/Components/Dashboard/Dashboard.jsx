@@ -32,8 +32,8 @@ export default function Dashboard({ firebaseUser }) {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const response = await fetch(`http://localhost:3000/api/users/${firebaseUser.uid}`);
-                //const response = await fetch(`${API_URL}/api/users/${firebaseUser.uid}`);
+                //const response = await fetch(`http://localhost:3000/api/users/${firebaseUser.uid}`);
+                const response = await fetch(`${API_URL}/api/users/${firebaseUser.uid}`);
 
                 const data = await response.json();
 
