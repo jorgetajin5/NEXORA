@@ -30,30 +30,62 @@ export default function Dashboard({ firebaseUser }) {
     // useEffect se ejecuta cuando el componente se carga
 
     useEffect(() => {
+        if (!firebaseUser) return;
+
+        const controller = new AbortController();
+
         const fetchUserData = async () => {
+            setLoading(true);
+
             try {
-                //const response = await fetch(`http://localhost:3000/api/users/${firebaseUser.uid}`);
-                const response = await fetch(`${API_URL}/api/users/${firebaseUser.uid}`);
+                // Obtiene el token de Firebase
+                const token = await firebaseUser.getIdToken();
+
+                // Consulta el usuario autenticado en PostgreSQL
+                const response = await fetch(
+                    `${API_URL}/api/users/me`,
+                    {
+                        method: 'GET',
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        },
+                        signal: controller.signal
+                    }
+                );
 
                 const data = await response.json();
 
-                if (response.ok) {
-                    setUserProfile(data);
-                } else {
-                    console.error("Error del servidor: ", data.error);
+                if (!response.ok) {
+                    throw new Error(
+                        data.message || 'No se pudo obtener el perfil'
+                    );
                 }
-            } catch (error) {
-                console.error("Error conectando al backend: ", error);
-            } finally {
-                setLoading(false);
-            }
 
+                // La API devuelve { ok: true, user: {...} }
+                if (!controller.signal.aborted) {
+                    setUserProfile(data.user);
+                }
+
+            } catch (error) {
+                if (!controller.signal.aborted) {
+                    console.error(
+                        'Error al cargar perfil:',
+                        error.message
+                    );
+                }
+            } finally {
+                if (!controller.signal.aborted) {
+                    setLoading(false);
+                }
+            }
         };
 
-        if (firebaseUser?.uid) {
-            fetchUserData();
-        }
-    }, [firebaseUser]);
+        fetchUserData();
+
+        return () => controller.abort();
+
+    }, [firebaseUser, API_URL]);
+
 
 
 
@@ -121,16 +153,16 @@ export default function Dashboard({ firebaseUser }) {
 
                 {/* Área de contenido dinámico */}
                 <div className="dashboard-body">
-                
-                {/* Área de contenido dinámico (Izquierda) */}
-                <section className="dashboard-content">
-                    {renderContent()}
-                </section>
-                
-                {/* Panel Derecho */}
-                <RightPanel activeView={activeView} />
-                
-            </div>
+
+                    {/* Área de contenido dinámico (Izquierda) */}
+                    <section className="dashboard-content">
+                        {renderContent()}
+                    </section>
+
+                    {/* Panel Derecho */}
+                    <RightPanel activeView={activeView} />
+
+                </div>
 
             </main>
 

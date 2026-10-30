@@ -35,25 +35,58 @@ export default function LoginForm({ role, onBack, onLoginSuccess }) {
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
     // Sincronización con firebase y postgreSQL
-    const syncUserToBackend = async (firebaseUser) => {
-        try {
-            // await fetch('http://localhost:3000/api/users', {
-            await fetch(`${API_URL}/api/users`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    uid: firebaseUser.uid,
-                    firstName: firebaseUser.displayName || name || 'Usuario',
-                    email: firebaseUser.email,
-                    rol: role
-                })
-            });
-            console.log("Datos sincronizados con PostgreSQL");
 
-        } catch (error) {
-            console.error("Error contactando al servidor PostGreSQL:", error);
+    const syncUserToBackend = async (firebaseUser) => {
+
+        // Convierte los roles del frontend a los de PostgreSQL
+        const roleMap = {
+            docente: 'TEACHER',
+            alumno: 'STUDENT',
+            padre: 'PARENT'
+        };
+
+        const selectedRole = roleMap[role];
+
+        if (!selectedRole) {
+            throw new Error('Tipo de cuenta no válido.');
         }
+
+        // Obtener token de Firebase Authentication
+        const token = await firebaseUser.getIdToken();
+
+        // Sincronizar usuario con PostgreSQL
+        const response = await fetch(`${API_URL}/api/users/sync`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                role: selectedRole,
+                firstName: firebaseUser.displayName || name || 'Usuario'
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.ok) {
+            throw new Error(
+                data.message || 'No se pudo sincronizar el usuario.'
+            );
+        }
+
+        // Comprobar que el tipo de cuenta seleccionado coincide con lo almacenado en POSTGRESQL
+        if (data.user.roleCode !== selectedRole) {
+            throw new Error(
+                'Esta cuenta pertenece a un tipo de usuario diferente.'
+            );
+        }
+
+        console.log('Usuario sincronizado con PostgreSQL');
+
+        return data.user;
     };
+
 
 
     //Diccionario de seleccion
@@ -134,7 +167,9 @@ export default function LoginForm({ role, onBack, onLoginSuccess }) {
             if (error.code === 'auth/email-already-in-use') setErrorMsg('Este correo ya está registrado.');
             else if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password') setErrorMsg('Correo o contraseña incorrectos.');
             else if (error.code === 'auth/weak-password') setErrorMsg('La contraseña debe tener al menos 6 caracteres.');
-            else setErrorMsg('Ocurrió un error. Inténtalo de nuevo.');
+            else setErrorMsg(
+                error.message || 'Ocurrió un error. Inténtalo de nuevo.'
+            );
         }
     };
 
