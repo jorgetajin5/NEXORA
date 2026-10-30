@@ -1,0 +1,12 @@
+{
+  "appId": "com.umg.nexora",
+  "appName": "Nexora",
+  "webDir": "dist",
+  
+  "plugins": {
+    "FirebaseAuthentication": {
+      "providers": ["google.com"],
+      "skipNativeAuth": true
+    }
+  }
+}

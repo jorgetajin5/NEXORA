@@ -2,7 +2,8 @@
 .sidebar-container {
     width: 260px;
     height: 100vh;
-    background-color: #fdfaf2;
+    /* background-color: #fdfaf2; */
+    background: linear-gradient(to bottom, #fff8e4 40%, #ffffff 100%);
     display: flex;
     flex-direction: column;
     padding: 1.5rem;
@@ -49,35 +50,6 @@
     margin: 0;
 }
 
-/* BOTON UNETE A UNA CLASE*/
-.btn-join-class {
-    width: 100%;
-    background-color: #d49a1c;
-    color: white;
-    border: none;
-    padding: 0.8rem;
-    border-radius: 8px;
-    font-weight: 700;
-    font-size: 0.8rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    cursor: pointer;
-    margin-bottom: 2rem;
-    transition: background-color 0.2s, transform 0.2s;
-    box-shadow: 0 4px 10px rgba(212, 154, 28, 0.3);
-}
-
-.btn-join-class:hover {
-    background-color: #b68826;
-    transform: translateY(-2px);
-}
-
-.join-icon {
-    width: 18px;
-    height: 18px;
-}
 
 /* MENU DE NAVEGACION */
 .sidebar-nav {
@@ -111,9 +83,10 @@
 }
 
 .sidebar-nav li.active a {
-    background-color: #fcf1d8;
-    color: #b68826;
+    background-color: #B08836;
+    color: #ffffff;
     font-weight: 700;
+    box-shadow: 0 4px 10px rgba(217, 119, 6, 0.25);
 }
 
 .nav-icon {

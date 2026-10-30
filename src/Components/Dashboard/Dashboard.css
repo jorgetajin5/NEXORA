@@ -2,7 +2,7 @@
 .dashboard-layout {
     display: flex;
     height: 100vh;
-    background-color: #fdfaf2; 
+    background-color: #fdfaf2;
     font-family: inherit;
 }
 
@@ -21,7 +21,8 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    overflow: hidden; /* Evita desborde de ventana */
+    overflow: hidden;
+    /* Evita desborde de ventana */
 }
 
 /* Encabezado */
@@ -33,6 +34,16 @@
     align-items: center !important;
     /* gap: 1.5rem; */
 }
+
+.dashboard-body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    /* Evita que la página completa haga scroll */
+    background-color: #fcfbf8;
+    /* Asegura el color de fondo general*/
+}
+
 
 .user-profile {
     display: flex;
@@ -51,7 +62,16 @@
 .dashboard-content {
     flex: 1;
     padding: 2rem 3rem;
-    overflow-y: auto; /* scroll solo en el contenido */
+    overflow-y: auto;
+    /* scroll solo en el contenido */
+    scrollbar-width: none;
+    /* oculta el scroll*/
+}
+
+/* Oculta la barra en Chrome, Safari y Edge */
+.dashboard-content::-webkit-scrollbar {
+    width: 0;
+    background: transparent;
 }
 
 .btn-logout {
@@ -71,12 +91,19 @@
     color: #991b1b;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 991px) {
+    .dashboard-body {
+        flex-direction: column;
+        overflow-y: auto;
+    }
+
     .dashboard-topbar {
         padding: 1rem;
     }
 
     .dashboard-content {
-        padding: 1rem 1rem 1rem 1rem;
+        padding: 1.5rem 1.5rem;
+        /* padding: 1rem 1rem 1rem 1rem; */
+        overflow-y: visible;
     }
 }

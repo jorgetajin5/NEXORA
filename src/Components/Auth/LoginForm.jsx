@@ -8,6 +8,10 @@ import Dashboard from '../Dashboard/Dashboard';
 import { microsoftProvider } from '../../firebase';
 import firebase from 'firebase/compat/app';
 
+import { Capacitor } from '@capacitor/core';
+import { FirebaseAuthentication } from '@capacitor-firebase/authentication';
+import { signInWithCredential } from 'firebase/auth';
+
 
 
 export default function LoginForm({ role, onBack, onLoginSuccess }) {
@@ -31,25 +35,58 @@ export default function LoginForm({ role, onBack, onLoginSuccess }) {
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
     // Sincronización con firebase y postgreSQL
-    const syncUserToBackend = async (firebaseUser) => {
-        try {
-            // await fetch('http://localhost:3000/api/users', {
-            await fetch(`${API_URL}/api/users`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    uid: firebaseUser.uid,
-                    firstName: firebaseUser.displayName || name || 'Usuario',
-                    email: firebaseUser.email,
-                    rol: role
-                })
-            });
-            console.log("Datos sincronizados con PostgreSQL");
 
-        } catch (error) {
-            console.error("Error contactando al servidor PostGreSQL:", error);
+    const syncUserToBackend = async (firebaseUser) => {
+
+        // Convierte los roles del frontend a los de PostgreSQL
+        const roleMap = {
+            docente: 'TEACHER',
+            alumno: 'STUDENT',
+            padre: 'PARENT'
+        };
+
+        const selectedRole = roleMap[role];
+
+        if (!selectedRole) {
+            throw new Error('Tipo de cuenta no válido.');
         }
+
+        // Obtener token de Firebase Authentication
+        const token = await firebaseUser.getIdToken();
+
+        // Sincronizar usuario con PostgreSQL
+        const response = await fetch(`${API_URL}/api/users/sync`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                role: selectedRole,
+                firstName: firebaseUser.displayName || name || 'Usuario'
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.ok) {
+            throw new Error(
+                data.message || 'No se pudo sincronizar el usuario.'
+            );
+        }
+
+        // Comprobar que el tipo de cuenta seleccionado coincide con lo almacenado en POSTGRESQL
+        if (data.user.roleCode !== selectedRole) {
+            throw new Error(
+                'Esta cuenta pertenece a un tipo de usuario diferente.'
+            );
+        }
+
+        console.log('Usuario sincronizado con PostgreSQL');
+
+        return data.user;
     };
+
 
 
     //Diccionario de seleccion
@@ -130,35 +167,100 @@ export default function LoginForm({ role, onBack, onLoginSuccess }) {
             if (error.code === 'auth/email-already-in-use') setErrorMsg('Este correo ya está registrado.');
             else if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password') setErrorMsg('Correo o contraseña incorrectos.');
             else if (error.code === 'auth/weak-password') setErrorMsg('La contraseña debe tener al menos 6 caracteres.');
-            else setErrorMsg('Ocurrió un error. Inténtalo de nuevo.');
+            else setErrorMsg(
+                error.message || 'Ocurrió un error. Inténtalo de nuevo.'
+            );
         }
     };
 
 
-    // Función para autenticación con Google
+    // // Función para autenticación con Google
+    // const handleGoogleSignIn = async () => {
+    //     setErrorMsg(''); // Limpia errores previos
+    //     const provider = new GoogleAuthProvider();
+
+    //     try {
+    //         const userCredential = await signInWithPopup(auth, provider);
+    //         console.log("Autenticación con Google exitosa:");
+    //         //console.log("Autenticación con Google exitosa:", result.user);
+
+    //         // sincronizacion de datos con el backend
+    //         await syncUserToBackend(userCredential.user);
+
+    //         // redirigir al Dashboard
+    //         if (onLoginSuccess) onLoginSuccess(userCredential.user);
+
+    //     } catch (error) {
+    //         console.error("Error de Firebase con Google:", error.code);
+    //         // Controla si el usuario cierra la ventana antes de terminar
+    //         if (error.code === 'auth/popup-closed-by-user') {
+    //             return; // se ignora error.
+    //         }
+    //         setErrorMsg('Ocurrió un error al conectar con Google.');
+    //         console.error("Error al iniciar sesión con Google: ", error.message);
+    //     }
+    // };
+
+    //funcion creada para funcionalidad en android
+
     const handleGoogleSignIn = async () => {
-        setErrorMsg(''); // Limpia errores previos
-        const provider = new GoogleAuthProvider();
+        setErrorMsg('');
 
         try {
-            const userCredential = await signInWithPopup(auth, provider);
-            console.log("Autenticación con Google exitosa:");
-            //console.log("Autenticación con Google exitosa:", result.user);
+            let userCredential;
 
-            // sincronizacion de datos con el backend
+            if (Capacitor.isNativePlatform()) {
+                // Android e iOS
+                const result =
+                    await FirebaseAuthentication.signInWithGoogle();
+
+                const idToken = result.credential?.idToken;
+
+                if (!idToken) {
+                    throw new Error(
+                        'No se recibió el token de Google'
+                    );
+                }
+
+                const credential =
+                    GoogleAuthProvider.credential(idToken);
+
+                userCredential = await signInWithCredential(
+                    auth,
+                    credential
+                );
+
+            } else {
+                // Navegador web
+                const provider = new GoogleAuthProvider();
+
+                userCredential = await signInWithPopup(
+                    auth,
+                    provider
+                );
+            }
+
+            // Conserva sincronización con PostgreSQL
             await syncUserToBackend(userCredential.user);
 
-            // redirigir al Dashboard
-            if (onLoginSuccess) onLoginSuccess(userCredential.user);
+            // Conserva navegacion al Dashboard
+            if (onLoginSuccess) {
+                onLoginSuccess(userCredential.user);
+            }
 
         } catch (error) {
-            console.error("Error de Firebase con Google:", error.code);
-            // Controla si el usuario cierra la ventana antes de terminar
+            console.error(
+                'Error al iniciar sesión con Google:',
+                error
+            );
+
             if (error.code === 'auth/popup-closed-by-user') {
-                return; // se ignora error.
+                return;
             }
-            setErrorMsg('Ocurrió un error al conectar con Google.');
-            console.error("Error al iniciar sesión con Google: ", error.message);
+
+            setErrorMsg(
+                'Ocurrió un error al conectar con Google.'
+            );
         }
     };
 
@@ -264,7 +366,7 @@ export default function LoginForm({ role, onBack, onLoginSuccess }) {
                     </h2>
                 </div>
 
-                
+
 
 
                 {/* Mensaje de éxito ( si el correo se envió) */}
@@ -284,7 +386,7 @@ export default function LoginForm({ role, onBack, onLoginSuccess }) {
 
                 {/* Muestra mensaje de error si existe */}
                 {errorMsg && <div className="error-message">{errorMsg}</div>}
-                
+
 
                 {/* condiciona: si está en modo recuperación */}
                 {isForgotPassword ? (

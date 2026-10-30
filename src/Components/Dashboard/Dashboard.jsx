@@ -7,7 +7,8 @@ import Sidebar from './Sidebar/Sidebar';
 import TopBar from './TopBar/TopBar';
 import Publications from './Views/Publications/Publications';
 import ClassView from './Views/Classes/ClassView';
-
+import HomeView from './Views/Home/HomeView';
+import RightPanel from './RightPanel/RightPanel';
 
 
 export default function Dashboard({ firebaseUser }) {
@@ -29,30 +30,62 @@ export default function Dashboard({ firebaseUser }) {
     // useEffect se ejecuta cuando el componente se carga
 
     useEffect(() => {
+        if (!firebaseUser) return;
+
+        const controller = new AbortController();
+
         const fetchUserData = async () => {
+            setLoading(true);
+
             try {
-                //const response = await fetch(`http://localhost:3000/api/users/${firebaseUser.uid}`);
-                const response = await fetch(`${API_URL}/api/users/${firebaseUser.uid}`);
+                // Obtiene el token de Firebase
+                const token = await firebaseUser.getIdToken();
+
+                // Consulta el usuario autenticado en PostgreSQL
+                const response = await fetch(
+                    `${API_URL}/api/users/me`,
+                    {
+                        method: 'GET',
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        },
+                        signal: controller.signal
+                    }
+                );
 
                 const data = await response.json();
 
-                if (response.ok) {
-                    setUserProfile(data);
-                } else {
-                    console.error("Error del servidor: ", data.error);
+                if (!response.ok) {
+                    throw new Error(
+                        data.message || 'No se pudo obtener el perfil'
+                    );
                 }
-            } catch (error) {
-                console.error("Error conectando al backend: ", error);
-            } finally {
-                setLoading(false);
-            }
 
+                // La API devuelve { ok: true, user: {...} }
+                if (!controller.signal.aborted) {
+                    setUserProfile(data.user);
+                }
+
+            } catch (error) {
+                if (!controller.signal.aborted) {
+                    console.error(
+                        'Error al cargar perfil:',
+                        error.message
+                    );
+                }
+            } finally {
+                if (!controller.signal.aborted) {
+                    setLoading(false);
+                }
+            }
         };
 
-        if (firebaseUser?.uid) {
-            fetchUserData();
-        }
-    }, [firebaseUser]);
+        fetchUserData();
+
+        return () => controller.abort();
+
+    }, [firebaseUser, API_URL]);
+
 
 
 
@@ -70,7 +103,7 @@ export default function Dashboard({ firebaseUser }) {
     const renderContent = () => {
         switch (activeView) {
             case 'inicio':
-                return <Publications userProfile={userProfile} />;
+                return <HomeView userProfile={userProfile} />;
             case 'clases':
                 return <ClassView pageId="clases" />;
             case 'calendario':
@@ -113,36 +146,26 @@ export default function Dashboard({ firebaseUser }) {
                     userProfile={userProfile}
                     onLogout={handleLogout}
                     onOpenMobileMenu={handleOpenMobileMenu}
+                    activeView={activeView}
                 />
 
 
-                {/* <header className="dashboard-topbar">
-                    <div className="user-profile">
-                        <div className="avatar-placeholder"></div>
-                        <span>
-                            <strong>{userProfile?.rol ? userProfile.rol.charAt(0).toUpperCase() + userProfile.rol.slice(1) : 'Usuario'}:</strong> 
-                            {' '}{userProfile?.firstname || userProfile?.firstName} {userProfile?.lastname || userProfile?.lastName}
-                        </span>
-                    </div>
-
-                    <button 
-                        className='btn-logout'
-                        onClick={handleLogout} 
-                        
-                    >
-                        Cerrar sesión
-                    </button>
-
-                    
-                </header> */}
 
                 {/* Área de contenido dinámico */}
-                <section className="dashboard-content">
-                    {/* <h2>¡Hola, {userProfile?.firstname || userProfile?.firstName}!</h2> */}
-                    {renderContent()}
-                </section>
+                <div className="dashboard-body">
+
+                    {/* Área de contenido dinámico (Izquierda) */}
+                    <section className="dashboard-content">
+                        {renderContent()}
+                    </section>
+
+                    {/* Panel Derecho */}
+                    <RightPanel activeView={activeView} />
+
+                </div>
 
             </main>
+
         </div>
     );
 }
