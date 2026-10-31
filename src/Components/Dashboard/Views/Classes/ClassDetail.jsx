@@ -9,7 +9,8 @@ export default function ClassDetail({
     firebaseUser,
     onBack,
     onSettingsUpdated,
-    onManageStudents
+    onManageStudents,
+    onManageRequests
 }) {
     const [classroom, setClassroom] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -318,6 +319,15 @@ export default function ClassDetail({
                             style={{ marginTop: '1.5rem' }}
                         >
                             Gestionar estudiantes
+                        </button>
+
+                        <button
+                            type="button"
+                            className="class-detail-save"
+                            onClick={onManageRequests}
+                            style={{ marginTop: '0.75rem' }}
+                        >
+                            Solicitudes de ingreso
                         </button>
                     </div>
                 </>

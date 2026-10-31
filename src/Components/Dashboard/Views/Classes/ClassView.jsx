@@ -3,6 +3,7 @@ import './ClassView.css';
 import ClassDetail from './ClassDetail';
 import { createPortal } from 'react-dom';
 import ClassStudents from './ClassStudents';
+import ClassJoinRequests from './ClassJoinRequests';
 
 export default function ClassView({ userProfile, firebaseUser }) {
     // asignamos un rol por defecto si aún no carga
@@ -615,27 +616,38 @@ export default function ClassView({ userProfile, firebaseUser }) {
                         </button>
 
 
+
                         {modalSection === 'details' ? (
                             <ClassDetail
                                 classroomId={selectedClassId}
                                 firebaseUser={firebaseUser}
                                 onBack={() => setSelectedClassId(null)}
-                                onManageStudents={() => setModalSection('students')}
+                                onManageStudents={() =>
+                                    setModalSection('students')
+                                }
+                                onManageRequests={() =>
+                                    setModalSection('requests')
+                                }
                                 onSettingsUpdated={(settings) => {
                                     setClasses((previous) =>
                                         previous.map((cls) =>
                                             cls.id === settings.id
-                                                ? { ...cls, joinMode: settings.joinMode }
+                                                ? {
+                                                    ...cls,
+                                                    joinMode: settings.joinMode
+                                                }
                                                 : cls
                                         )
                                     );
                                 }}
                             />
-                        ) : (
+                        ) : modalSection === 'students' ? (
                             <ClassStudents
                                 classroomId={selectedClassId}
                                 firebaseUser={firebaseUser}
-                                onBack={() => setModalSection('details')}
+                                onBack={() =>
+                                    setModalSection('details')
+                                }
                                 onStudentsChanged={(count) => {
                                     setClasses((previous) =>
                                         previous.map((cls) =>
@@ -646,7 +658,43 @@ export default function ClassView({ userProfile, firebaseUser }) {
                                     );
                                 }}
                             />
+                        ) : (
+                            <ClassJoinRequests
+                                classroomId={selectedClassId}
+                                firebaseUser={firebaseUser}
+                                onBack={() =>
+                                    setModalSection('details')
+                                }
+                                onApproved={async () => {
+                                    try {
+                                        const token = await firebaseUser.getIdToken();
+
+                                        const response = await fetch(
+                                            `${API_URL}/api/classrooms/mine`,
+                                            {
+                                                headers: {
+                                                    Authorization: `Bearer ${token}`
+                                                }
+                                            }
+                                        );
+
+                                        if (!response.ok) return;
+
+                                        const data = await response.json();
+
+                                        if (data.ok) {
+                                            setClasses(data.classes);
+                                        }
+                                    } catch (error) {
+                                        console.error(
+                                            'No se pudo actualizar el contador:',
+                                            error
+                                        );
+                                    }
+                                }}
+                            />
                         )}
+
 
                     </div>
                 </div>,

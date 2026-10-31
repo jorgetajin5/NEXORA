@@ -9,6 +9,7 @@ import Publications from './Views/Publications/Publications';
 import ClassView from './Views/Classes/ClassView';
 import HomeView from './Views/Home/HomeView';
 import RightPanel from './RightPanel/RightPanel';
+import StudentClassView from './Views/Classes/StudentClassView';
 
 
 export default function Dashboard({ firebaseUser }) {
@@ -104,14 +105,23 @@ export default function Dashboard({ firebaseUser }) {
         switch (activeView) {
             case 'inicio':
                 return <HomeView userProfile={userProfile} />;
+
             case 'clases':
+                if (userProfile?.rol === 'alumno') {
+                    return (
+                        <StudentClassView
+                            firebaseUser={firebaseUser}
+                        />
+                    );
+                }
+
                 return (
                     <ClassView
-                        pageId="clases"
                         userProfile={userProfile}
                         firebaseUser={firebaseUser}
                     />
                 );
+
             case 'calendario':
             case 'mensajes':
                 return <UnderConstruction pageId={activeView} />;

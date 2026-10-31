@@ -1,0 +1,152 @@
+
+.cjr-container {
+    width: 100%;
+    box-sizing: border-box;
+    color: #334155;
+}
+
+.cjr-back {
+    border: none;
+    background: transparent;
+    color: #b7791f;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 0;
+    margin-bottom: 1.25rem;
+}
+
+.cjr-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.cjr-header h2 {
+    color: #172033;
+    margin: 0 0 0.5rem;
+}
+
+.cjr-header p,
+.cjr-empty p {
+    color: #64748b;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.cjr-count {
+    white-space: nowrap;
+    background: #fef3c7;
+    color: #92400e;
+    border-radius: 20px;
+    padding: 0.5rem 0.8rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.cjr-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.cjr-request {
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 1.25rem;
+    background: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.cjr-student {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+
+.cjr-student strong {
+    color: #172033;
+}
+
+.cjr-student small {
+    color: #64748b;
+}
+
+.cjr-pending {
+    border-radius: 20px;
+    background: #fef3c7;
+    color: #92400e;
+    font-weight: 700;
+    font-size: 0.75rem;
+    padding: 0.3rem 0.6rem;
+}
+
+.cjr-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.cjr-actions button {
+    border-radius: 9px;
+    padding: 0.7rem 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+}
+
+.cjr-approve {
+    background: #15803d;
+    color: #fff;
+}
+
+.cjr-reject {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.cjr-actions button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.cjr-empty {
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    border-radius: 14px;
+    padding: 2rem;
+    text-align: center;
+}
+
+.cjr-empty h3 {
+    margin-top: 0;
+    color: #172033;
+}
+
+.cjr-error {
+    color: #b91c1c;
+    margin-bottom: 1rem;
+}
+
+.cjr-success {
+    color: #15803d;
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 600px) {
+    .cjr-header,
+    .cjr-request {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .cjr-actions button {
+        flex: 1;
+    }
+}

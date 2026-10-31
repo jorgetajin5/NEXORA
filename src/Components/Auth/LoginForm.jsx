@@ -34,57 +34,60 @@ export default function LoginForm({ role, onBack, onLoginSuccess }) {
 
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
+
+    const ROLE_CODES = {
+        docente: 'TEACHER',
+        alumno: 'STUDENT',
+        padre: 'PARENT'
+    };
+
     // Sincronización con firebase y postgreSQL
 
+
     const syncUserToBackend = async (firebaseUser) => {
+        const roleCode = ROLE_CODES[role];
 
-        // Convierte los roles del frontend a los de PostgreSQL
-        const roleMap = {
-            docente: 'TEACHER',
-            alumno: 'STUDENT',
-            padre: 'PARENT'
-        };
-
-        const selectedRole = roleMap[role];
-
-        if (!selectedRole) {
-            throw new Error('Tipo de cuenta no válido.');
+        if (!roleCode) {
+            throw new Error(
+                'Este tipo de cuenta todavía no está habilitado para el autorregistro.'
+            );
         }
 
-        // Obtener token de Firebase Authentication
         const token = await firebaseUser.getIdToken();
 
-        // Sincronizar usuario con PostgreSQL
-        const response = await fetch(`${API_URL}/api/users/sync`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify({
-                role: selectedRole,
-                firstName: firebaseUser.displayName || name || 'Usuario'
-            })
-        });
+        const API_URL =
+            import.meta.env.VITE_API_URL ||
+            'http://localhost:3000';
+
+        const response = await fetch(
+            `${API_URL}/api/users/sync`,
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    role: roleCode,
+                    firstName:
+                        firebaseUser.displayName ||
+                        name.trim() ||
+                        'Usuario',
+                    lastName: ''
+                })
+            }
+        );
 
         const data = await response.json();
 
         if (!response.ok || !data.ok) {
             throw new Error(
-                data.message || 'No se pudo sincronizar el usuario.'
+                data.message ||
+                'No se pudo registrar la cuenta en Nexora.'
             );
         }
 
-        // Comprobar que el tipo de cuenta seleccionado coincide con lo almacenado en POSTGRESQL
-        if (data.user.roleCode !== selectedRole) {
-            throw new Error(
-                'Esta cuenta pertenece a un tipo de usuario diferente.'
-            );
-        }
-
-        console.log('Usuario sincronizado con PostgreSQL');
-
-        return data.user;
+        return data;
     };
 
 
