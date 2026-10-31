@@ -6,7 +6,7 @@
    ================================================ */
 
 .cv-container {
-    --cv-gap: 20px;
+    --cv-gap: 15px;
     --cv-text: #1d293d;
     --cv-muted: #7e8ca2;
     --cv-line: #eae7e0;
@@ -398,4 +398,98 @@
     .cv-classes-grid { grid-template-columns: 1fr; }
     .cv-class-card { padding: 18px; min-height: 0; }
     .cv-banner-content h3 { font-size: 16px; }
+}
+
+/* ==========================================
+   Menú de archivo y vistas Activas/Archivadas
+   ========================================== */
+.cv-list-tabs {
+    display: flex;
+    gap: 9px;
+    flex-wrap: wrap;
+    margin: 0 0 var(--cv-gap);
+}
+
+.cv-list-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 38px;
+    padding: 8px 14px;
+    border: 1px solid #e3e8ee;
+    border-radius: 10px;
+    background: #fff;
+    color: #64748b;
+    font: inherit;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.cv-list-tab--active {
+    background: #fff5dc;
+    color: #996a16;
+    border-color: #edd7a5;
+}
+
+.cv-card-options-wrap {
+    position: relative;
+    flex: 0 0 auto;
+}
+
+.cv-options-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    z-index: 30;
+    min-width: 180px;
+    box-sizing: border-box;
+    padding: 6px;
+    background: #fff;
+    border: 1px solid #e7ebef;
+    border-radius: 12px;
+    box-shadow: 0 12px 28px rgba(16, 24, 40, .13);
+}
+
+.cv-options-menu button {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    min-height: 39px;
+    padding: 9px 11px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: #37465c;
+    font: inherit;
+    font-size: 12.5px;
+    font-weight: 650;
+    text-align: left;
+    cursor: pointer;
+}
+
+.cv-options-menu button:hover:not(:disabled) {
+    background: #fff6e6;
+    color: #986719;
+}
+
+.cv-options-menu button:disabled { opacity: .5; cursor: not-allowed; }
+.cv-options-menu button:focus-visible { outline: 2px solid #c79639; }
+.cv-btn-options[aria-expanded="true"] { background: #f4f6fa; }
+
+.cv-class-card--archived { cursor: default; }
+.cv-class-card--archived:hover { transform: none; }
+.cv-btn-restore { color: #996a16; border-color: #edd7a5; }
+.cv-btn-restore:hover:not(:disabled) { background: #fffbf2; }
+.cv-btn-restore:disabled { opacity: .5; cursor: not-allowed; }
+
+.cv-archive-error {
+    margin: 0 0 15px;
+    padding: 11px 14px;
+    border: 1px solid #f1caca;
+    border-radius: 10px;
+    background: #fff6f6;
+    color: #b42318;
+    font-size: 12.5px;
 }

@@ -4,7 +4,7 @@ import ClassDetail from './ClassDetail';
 import { createPortal } from 'react-dom';
 import ClassStudents from './ClassStudents';
 import ClassJoinRequests from './ClassJoinRequests';
-import { BookOpen, Plus, Search, UsersRound, Eye, Ellipsis, ClipboardCheck } from 'lucide-react';
+import { BookOpen, Plus, Search, UsersRound, Eye, Ellipsis, ClipboardCheck, Archive, ArchiveRestore, Info } from 'lucide-react';
 
 
 export default function ClassView({ userProfile, firebaseUser, onOpenClass }) {
@@ -22,6 +22,14 @@ export default function ClassView({ userProfile, firebaseUser, onOpenClass }) {
     const [loadingClasses, setLoadingClasses] = useState(true);
     const [classesError, setClassesError] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
+
+    // Clases activas y archivadas. No modifica los datos académicos.
+    const [showArchived, setShowArchived] = useState(false);
+    const [archivedClasses, setArchivedClasses] = useState([]);
+    const [loadingArchived, setLoadingArchived] = useState(false);
+    const [archiveError, setArchiveError] = useState('');
+    const [archiveBusyId, setArchiveBusyId] = useState(null);
+    const [openOptionsClassId, setOpenOptionsClassId] = useState(null);
 
     // Detalles clase
     const [modalSection, setModalSection] = useState('details');
@@ -170,7 +178,98 @@ export default function ClassView({ userProfile, firebaseUser, onOpenClass }) {
         }
     };
 
-    const filteredClasses = classes.filter((cls) => {
+    // Reutiliza la autenticación actual de Firebase.
+    const archiveRequest = async (path, options = {}) => {
+        if (!firebaseUser) throw new Error('Inicia sesión nuevamente.');
+        const token = await firebaseUser.getIdToken();
+        const response = await fetch(`${API_URL}${path}`, {
+            ...options,
+            headers: {
+                ...options.headers,
+                Authorization: `Bearer ${token}`
+            }
+        });
+        const data = await response.json();
+        if (!response.ok || !data.ok) {
+            throw new Error(data.message || 'No se pudo completar la operación.');
+        }
+        return data;
+    };
+
+    const openArchivedClasses = async () => {
+        setShowArchived(true);
+        setOpenOptionsClassId(null);
+        setArchiveError('');
+        setLoadingArchived(true);
+        try {
+            const data = await archiveRequest('/api/classrooms/archived/mine');
+            setArchivedClasses(data.classes || []);
+        } catch (err) {
+            setArchiveError(err.message);
+        } finally {
+            setLoadingArchived(false);
+        }
+    };
+
+    const handleArchiveClass = async (cls) => {
+        if (archiveBusyId !== null) return;
+        setOpenOptionsClassId(null);
+        if (!window.confirm(
+            `¿Archivar la clase «${cls.title}»?\n\n` +
+            'Se ocultará del listado activo y los estudiantes no podrán ingresar ' +
+            'hasta que la restaures. Las publicaciones, matrículas e historial se conservarán.'
+        )) return;
+        setArchiveBusyId(cls.id);
+        setArchiveError('');
+        try {
+            await archiveRequest(`/api/classrooms/${cls.id}/archive`, { method: 'PATCH' });
+            setClasses(prev => prev.filter(item => item.id !== cls.id));
+            setArchivedClasses(prev => [{ ...cls, status: 'archived' }, ...prev.filter(item => item.id !== cls.id)]);
+        } catch (err) {
+            setArchiveError(err.message);
+        } finally {
+            setArchiveBusyId(null);
+        }
+    };
+
+    const handleRestoreClass = async (cls) => {
+        if (archiveBusyId !== null) return;
+        setOpenOptionsClassId(null);
+        if (!window.confirm(`¿Restaurar la clase «${cls.title}»?\n\nVolverá a estar activa con su configuración de inscripciones anterior.`)) return;
+        setArchiveBusyId(cls.id);
+        setArchiveError('');
+        try {
+            await archiveRequest(`/api/classrooms/${cls.id}/restore`, { method: 'PATCH' });
+            setArchivedClasses(prev => prev.filter(item => item.id !== cls.id));
+            setClasses(prev => [{ ...cls, status: 'active' }, ...prev.filter(item => item.id !== cls.id)]);
+        } catch (err) {
+            setArchiveError(err.message);
+        } finally {
+            setArchiveBusyId(null);
+        }
+    };
+
+    useEffect(() => {
+        const closeOptions = event => {
+            if (!event.target.closest('.cv-card-options-wrap')) {
+                setOpenOptionsClassId(null);
+            }
+        };
+        const escape = event => {
+            if (event.key === 'Escape') setOpenOptionsClassId(null);
+        };
+        document.addEventListener('pointerdown', closeOptions);
+        document.addEventListener('keydown', escape);
+        return () => {
+            document.removeEventListener('pointerdown', closeOptions);
+            document.removeEventListener('keydown', escape);
+        };
+    }, []);
+
+    const visibleClasses = showArchived ? archivedClasses : classes;
+    const canArchive = ['docente', 'director'].includes(String(role).toLowerCase());
+
+    const filteredClasses = visibleClasses.filter((cls) => {
         const query = searchTerm.trim().toLocaleLowerCase('es');
         if (!query) return true;
         return [cls.title, cls.category, cls.code]
@@ -239,9 +338,11 @@ export default function ClassView({ userProfile, firebaseUser, onOpenClass }) {
             {/* Encabezado y búsqueda: sin controles decorativos inactivos */}
             <div className="cv-list-header">
                 <div className="cv-list-title-group">
-                    <h3>Mis clases</h3>
-                    <span className="cv-badge-count">{classes.length}</span>
-                    <p>Accede a tus aulas y gestiona sus estudiantes.</p>
+                    <h3>{showArchived ? 'Clases archivadas' : 'Mis clases'}</h3>
+                    <span className="cv-badge-count">{visibleClasses.length}</span>
+                    <p>{showArchived
+                        ? 'Puedes restaurar las clases guardadas anteriormente.'
+                        : 'Accede a tus aulas y gestiona sus estudiantes.'}</p>
                 </div>
                 <div className="cv-list-actions">
                     <label className="cv-search-box">
@@ -257,23 +358,50 @@ export default function ClassView({ userProfile, firebaseUser, onOpenClass }) {
                 </div>
             </div>
 
+            {/* Alternar entre clases disponibles y archivadas */}
+            {canArchive && (
+                <div className="cv-list-tabs" role="group" aria-label="Estado de las clases">
+                    <button
+                        type="button"
+                        className={!showArchived ? 'cv-list-tab cv-list-tab--active' : 'cv-list-tab'}
+                        aria-pressed={!showArchived}
+                        onClick={() => { setShowArchived(false); setOpenOptionsClassId(null); setArchiveError(''); }}
+                    >
+                        <BookOpen size={16} aria-hidden="true" /> Activas
+                    </button>
+                    <button
+                        type="button"
+                        className={showArchived ? 'cv-list-tab cv-list-tab--active' : 'cv-list-tab'}
+                        aria-pressed={showArchived}
+                        onClick={openArchivedClasses}
+                    >
+                        <Archive size={16} aria-hidden="true" /> Archivadas
+                    </button>
+                </div>
+            )}
+
+            {archiveError && (
+                <p className="cv-archive-error" role="alert">{archiveError}</p>
+            )}
+
             {/* Cuadrícula de Clases, condicional si esta vacío */}
 
-            {loadingClasses ? (
-                <p>Cargando tus clases...</p>
-            ) : classesError ? (
+            {(showArchived ? loadingArchived : loadingClasses) ? (
+                <p>Cargando clases...</p>
+            ) : !showArchived && classesError ? (
                 <p role="alert" style={{ color: '#dc2626' }}>
                     {classesError}
                 </p>
-            ) : classes.length > 0 ? (
+            ) : visibleClasses.length > 0 ? (
                 <div className="cv-classes-grid">
 
                     {filteredClasses.map((cls) => (
                         <article
-                            className="cv-class-card"
+                            className={showArchived ? 'cv-class-card cv-class-card--archived' : 'cv-class-card'}
                             key={cls.id}
-                            onClick={() => onOpenClass?.(cls)}
+                            onClick={showArchived ? undefined : () => onOpenClass?.(cls)}
                             onKeyDown={(event) => {
+                                if (showArchived) return;
                                 if (
                                     event.target === event.currentTarget &&
                                     (event.key === 'Enter' || event.key === ' ')
@@ -282,27 +410,50 @@ export default function ClassView({ userProfile, firebaseUser, onOpenClass }) {
                                     onOpenClass?.(cls);
                                 }
                             }}
-                            tabIndex={0}
-                            aria-label={`Entrar a la clase ${cls.title}`}
+                            tabIndex={showArchived ? undefined : 0}
+                            aria-label={showArchived ? undefined : `Entrar a la clase ${cls.title}`}
                         >
                             <div className="cv-card-header">
                                 <span className="cv-tag">
                                     <BookOpen size={14} aria-hidden="true" />
                                     {cls.category || 'Clase'}
                                 </span>
-                                <button
-                                    type="button"
-                                    className="cv-btn-options"
-                                    title="Ver detalles de la clase"
-                                    aria-label={`Ver detalles de ${cls.title}`}
-                                    onClick={(event) => {
-                                        event.stopPropagation();
-                                        setSelectedClassId(cls.id);
-                                        setModalSection('details');
-                                    }}
-                                >
-                                    <Ellipsis size={19} aria-hidden="true" />
-                                </button>
+                                <div className="cv-card-options-wrap">
+                                    <button
+                                        type="button"
+                                        className="cv-btn-options"
+                                        title="Opciones de la clase"
+                                        aria-label={`Opciones de ${cls.title}`}
+                                        aria-expanded={openOptionsClassId === cls.id}
+                                        onClick={(event) => {
+                                            event.stopPropagation();
+                                            setOpenOptionsClassId(current => current === cls.id ? null : cls.id);
+                                        }}
+                                    >
+                                        <Ellipsis size={19} aria-hidden="true" />
+                                    </button>
+                                    {openOptionsClassId === cls.id && (
+                                        <div className="cv-options-menu" onClick={event => event.stopPropagation()}>
+                                            {!showArchived && (
+                                                <button type="button" onClick={() => {
+                                                    setOpenOptionsClassId(null);
+                                                    setSelectedClassId(cls.id);
+                                                    setModalSection('details');
+                                                }}>
+                                                    <Info size={16} aria-hidden="true" /> Ver detalles
+                                                </button>
+                                            )}
+                                            <button
+                                                type="button"
+                                                disabled={archiveBusyId !== null}
+                                                onClick={() => showArchived ? handleRestoreClass(cls) : handleArchiveClass(cls)}
+                                            >
+                                                {showArchived ? <ArchiveRestore size={16} aria-hidden="true" /> : <Archive size={16} aria-hidden="true" />}
+                                                {showArchived ? 'Restaurar clase' : 'Archivar clase'}
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
 
                             <div className="cv-card-info">
@@ -322,17 +473,27 @@ export default function ClassView({ userProfile, firebaseUser, onOpenClass }) {
                             </div>
 
                             <div className="cv-card-footer">
-                                <button
-                                    type="button"
-                                    className="cv-btn-view"
-                                    onClick={(event) => {
-                                        event.stopPropagation();
-                                        onOpenClass?.(cls);
-                                    }}
-                                >
-                                    <Eye size={16} aria-hidden="true" />
-                                    Entrar a clase
-                                </button>
+                                {showArchived ? (
+                                    <button
+                                        type="button"
+                                        className="cv-btn-view cv-btn-restore"
+                                        disabled={archiveBusyId !== null}
+                                        onClick={(event) => { event.stopPropagation(); handleRestoreClass(cls); }}
+                                    >
+                                        <ArchiveRestore size={16} aria-hidden="true" />
+                                        {archiveBusyId === cls.id ? 'Restaurando...' : 'Restaurar clase'}
+                                    </button>
+                                ) : (
+                                    <button
+                                        type="button"
+                                        className="cv-btn-view"
+                                        disabled={archiveBusyId === cls.id}
+                                        onClick={(event) => { event.stopPropagation(); onOpenClass?.(cls); }}
+                                    >
+                                        <Eye size={16} aria-hidden="true" />
+                                        Entrar a clase
+                                    </button>
+                                )}
                             </div>
                         </article>
                     ))}
@@ -350,7 +511,7 @@ export default function ClassView({ userProfile, firebaseUser, onOpenClass }) {
                     textAlign: 'center',
                     backgroundColor: '#ffffff'
                 }}>
-                    <p style={{ color: '#94a3b8', fontSize: '0.95rem' }}>Aún no hay clases registradas...</p>
+                    <p style={{ color: '#94a3b8', fontSize: '0.95rem' }}>{showArchived ? 'No tienes clases archivadas.' : 'Aún no hay clases registradas...'}</p>
                 </div>
             )}
 
