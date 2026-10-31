@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import './ClassView.css';
+import ClassDetail from './ClassDetail';
+import { createPortal } from 'react-dom';
 
 export default function ClassView({ userProfile, firebaseUser }) {
     // asignamos un rol por defecto si aún no carga
     const role = userProfile?.rol || 'docente';
 
     const [isCreateModalOpen, setCreateModalOpen] = useState(false);
+    const [selectedClassId, setSelectedClassId] = useState(null);
     const [creatingClass, setCreatingClass] = useState(false);
     const [createClassError, setCreateClassError] = useState('');
 
@@ -158,7 +161,6 @@ export default function ClassView({ userProfile, firebaseUser }) {
             setCreatingClass(false);
         }
     };
-
 
     return (
         <div className="cv-container">
@@ -328,7 +330,7 @@ export default function ClassView({ userProfile, firebaseUser }) {
                             </div>
 
                             <div className="cv-card-footer">
-                                <button className="cv-btn-view">
+                                <button type="button" className="cv-btn-view" onClick={() => setSelectedClassId(cls.id)} >
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="16" height="16">
                                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                                         <circle cx="12" cy="12" r="3"></circle>
@@ -575,11 +577,63 @@ export default function ClassView({ userProfile, firebaseUser }) {
                                 </button>
                             </div>
                         </form>
-                        {/* --- FIN DEL FORMULARIO --- */}
+                        {/* --- FIN DEL FORMULARIO - CREAR CLASE --- */}
+
                     </div>
                 </div>
             )}
 
-        </div>
+            {/* MODAL INDEPENDIENTE - DETALLES DE CLASE */}
+
+            {selectedClassId && createPortal(
+                <div
+                    className="class-detail-overlay"
+                    onMouseDown={(e) => {
+                        if (e.target === e.currentTarget) {
+                            setSelectedClassId(null);
+                        }
+                    }}
+                >
+                    <div
+                        className="class-detail-modal"
+                        role="dialog"
+                        aria-modal="true"
+                        aria-label="Detalles de la clase"
+                    >
+                        <button
+                            type="button"
+                            className="class-detail-close"
+                            onClick={() => setSelectedClassId(null)}
+                            aria-label="Cerrar detalles"
+                            autoFocus
+                        >
+                            &times;
+                        </button>
+
+                        <ClassDetail
+                            classroomId={selectedClassId}
+                            firebaseUser={firebaseUser}
+                            onBack={() => setSelectedClassId(null)}
+                            onSettingsUpdated={(settings) => {
+                                setClasses((previous) =>
+                                    previous.map((cls) =>
+                                        cls.id === settings.id
+                                            ? {
+                                                ...cls,
+                                                joinMode: settings.joinMode
+                                            }
+                                            : cls
+                                    )
+                                );
+                            }}
+                        />
+                    </div>
+                </div>,
+                document.body
+            )}
+
+            {/* FIN MODAL - DETALLES DE CLASE */}
+
+        </div >
     );
 }
