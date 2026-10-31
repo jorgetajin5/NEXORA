@@ -1,48 +1,164 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './ClassView.css';
 
-export default function ClassView({ userProfile }) {
+export default function ClassView({ userProfile, firebaseUser }) {
     // asignamos un rol por defecto si aún no carga
     const role = userProfile?.rol || 'docente';
 
     const [isCreateModalOpen, setCreateModalOpen] = useState(false);
+    const [creatingClass, setCreatingClass] = useState(false);
+    const [createClassError, setCreateClassError] = useState('');
 
-    // Semillas ejemplificacion
-    const mockClasses = [
-        {
-            id: 1,
-            category: 'Matemáticas',
-            title: 'Matemáticas - 1º Básico',
-            code: 'MAT-1B-2025',
-            students: 24,
-            events: 12,
-            bgColor: '#f0f9ff',
-            textColor: '#0284c7',
-            illustration: '/class.png'
-        },
-        {
-            id: 2,
-            category: 'Ciencias',
-            title: 'Ciencias Naturales - 2º Básico',
-            code: 'CN-2B-2025',
-            students: 22,
-            events: 8,
-            bgColor: '#f0f9ff',
-            textColor: '#0284c7',
-            illustration: '/class.png'
-        },
-        {
-            id: 3,
-            category: 'Lenguaje',
-            title: 'Lengua y Literatura - 3º Básico',
-            code: 'LY-3B-2025',
-            students: 22,
-            events: 6,
-            bgColor: '#f0f9ff',
-            textColor: '#0284c7',
-            illustration: '/class.png'
+    // Consulta las clases del usuario autenticado
+
+    const [classes, setClasses] = useState([]);
+    const [loadingClasses, setLoadingClasses] = useState(true);
+    const [classesError, setClassesError] = useState('');
+
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
+    useEffect(() => {
+        if (!firebaseUser) {
+            setClasses([]);
+            setLoadingClasses(false);
+            return;
         }
-    ];
+
+        const controller = new AbortController();
+
+        const fetchClasses = async () => {
+            setLoadingClasses(true);
+            setClassesError('');
+
+            try {
+                const token = await firebaseUser.getIdToken();
+
+                const response = await fetch(
+                    `${API_URL}/api/classrooms/mine`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        },
+                        signal: controller.signal
+                    }
+                );
+
+                const data = await response.json();
+
+                if (!response.ok || !data.ok) {
+                    throw new Error(
+                        data.message || 'Error al cargar las clases'
+                    );
+                }
+
+                if (!controller.signal.aborted) {
+                    setClasses(data.classes);
+                }
+
+            } catch (error) {
+                if (!controller.signal.aborted) {
+                    setClassesError(error.message);
+                }
+            } finally {
+                if (!controller.signal.aborted) {
+                    setLoadingClasses(false);
+                }
+            }
+        };
+
+        fetchClasses();
+
+        return () => controller.abort();
+
+    }, [firebaseUser, API_URL]);
+
+
+
+    const handleCreateClass = async (event) => {
+        event.preventDefault();
+
+        if (creatingClass) return;
+
+        setCreatingClass(true);
+        setCreateClassError('');
+
+        try {
+            const formData = new FormData(event.currentTarget);
+
+            const name = String(formData.get('name') || '').trim();
+            const gradeLevel = String(formData.get('gradeLevel') || '');
+            const section = String(formData.get('section') || '');
+            const academicYear = String(formData.get('academicYear') || '');
+            const description = String(formData.get('description') || '').trim();
+            const joinMode = String(formData.get('joinMode') || 'approval');
+
+            if (!name || !gradeLevel || !section || !academicYear) {
+                throw new Error('Completa todos los campos obligatorios.');
+            }
+
+            if (name.length > 120) {
+                throw new Error('El nombre no puede superar 120 caracteres.');
+            }
+
+            if (description.length > 500) {
+                throw new Error('La descripción no puede superar 500 caracteres.');
+            }
+
+            const token = await firebaseUser.getIdToken();
+
+            const response = await fetch(`${API_URL}/api/classrooms`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    name,
+                    gradeLevel,
+                    section,
+                    academicYear,
+                    description,
+                    joinMode,
+                    schoolId: null
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok || !data.ok) {
+                throw new Error(
+                    data.message || 'No se pudo crear la clase.'
+                );
+            }
+
+            const newClass = data.classroom;
+
+            // Agregar la clase a las tarjetas existentes
+            setClasses((previousClasses) => [
+                {
+                    id: newClass.id,
+                    title: newClass.name,
+                    category: newClass.gradeLevel || 'Clase',
+                    code: newClass.classCode,
+                    joinMode: newClass.joinMode,
+                    schoolId: newClass.schoolId,
+                    status: newClass.status,
+                    students: 0
+                },
+                ...previousClasses
+            ]);
+
+            setCreateModalOpen(false);
+            console.log('Clase creada correctamente');
+
+        } catch (error) {
+            setCreateClassError(error.message);
+            console.error('Error creando clase:', error);
+        } finally {
+            setCreatingClass(false);
+        }
+    };
+
 
     return (
         <div className="cv-container">
@@ -72,7 +188,7 @@ export default function ClassView({ userProfile }) {
                                 <line x1="12" y1="5" x2="12" y2="19" />
                                 <line x1="5" y1="12" x2="19" y2="12" />
                             </svg>
-                            Crear clase
+                            {creatingClass ? 'Creando clase...' : 'Crear clase'}
                         </button>
                     </div>
                 </div>
@@ -105,7 +221,7 @@ export default function ClassView({ userProfile }) {
             <div className="cv-list-header">
                 <div className="cv-list-title-group">
                     <h3>Mis clases</h3>
-                    <span className="cv-badge-count">{mockClasses.length}</span>
+                    <span className="cv-badge-count">{classes.length}</span>
                     <p>Aquí encontrarás todas las clases que has creado.</p>
                 </div>
                 <div className="cv-list-actions">
@@ -134,16 +250,22 @@ export default function ClassView({ userProfile }) {
 
             {/* Cuadrícula de Clases, condicional si esta vacío */}
 
-            {mockClasses.length > 0 ? (
+            {loadingClasses ? (
+                <p>Cargando tus clases...</p>
+            ) : classesError ? (
+                <p role="alert" style={{ color: '#dc2626' }}>
+                    {classesError}
+                </p>
+            ) : classes.length > 0 ? (
                 <div className="cv-classes-grid">
-                    {mockClasses.map((cls) => (
+                    {classes.map((cls) => (
                         <div className="cv-class-card" key={cls.id}>
                             <div className="cv-card-header">
                                 <span
                                     className="cv-tag"
                                     style={{
-                                        backgroundColor: cls.bgColor,
-                                        color: cls.textColor
+                                        backgroundColor: '#f0f9ff',
+                                        color: '#0284c7'
                                     }}
                                 >
                                     {cls.category}
@@ -154,21 +276,21 @@ export default function ClassView({ userProfile }) {
                             <div
                                 className="cv-card-illustration"
                                 style={{
-                                    backgroundColor: cls.bgColor,
+                                    backgroundColor: '#f0f9ff',
                                     overflow: 'hidden',
                                     padding: '1.5rem'
                                 }}
                             >
-                                <img 
-                                src={cls.illustration} 
-                                alt={`Portada de ${cls.title}`} 
-                                style={{
-                                    width: '100%',
-                                    height: '100%',
-                                    objectFit: 'contain', 
-                                    objectPosition: 'center'
-                                }}
-                            />
+                                <img
+                                    src={'/class.png'}
+                                    alt={`Portada de ${cls.title}`}
+                                    style={{
+                                        width: '100%',
+                                        height: '100%',
+                                        objectFit: 'contain',
+                                        objectPosition: 'center'
+                                    }}
+                                />
                             </div>
 
                             <div className="cv-card-info">
@@ -197,8 +319,10 @@ export default function ClassView({ userProfile }) {
                                         <line x1="3" y1="10" x2="21" y2="10"></line>
                                     </svg>
                                     <div>
-                                        <strong>{cls.events}</strong>
-                                        <span>Próximos eventos</span>
+                                        <strong>
+                                            {cls.joinMode === 'automatic' ? 'Rápido' : 'Aprobación'}
+                                        </strong>
+                                        <span>Modo de ingreso</span>
                                     </div>
                                 </div>
                             </div>
@@ -274,8 +398,8 @@ export default function ClassView({ userProfile }) {
                         </div>
 
                         {/* --- INICIO DEL FORMULARIO --- */}
-                        <form onSubmit={(e) => { e.preventDefault(); console.log('Clase creada'); setCreateModalOpen(false); }}>
-                            
+                        <form onSubmit={handleCreateClass}>
+
                             {/* 1. Nombre de la clase */}
                             <div style={{ marginBottom: '1.5rem', textAlign: 'left' }}>
                                 <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', color: '#475569', marginBottom: '0.5rem', fontWeight: '600' }}>
@@ -283,6 +407,8 @@ export default function ClassView({ userProfile }) {
                                     Nombre de la clase *
                                 </label>
                                 <input
+
+                                    name="name"
                                     type="text"
                                     required
                                     placeholder="Ej. Matemáticas - 1° Básico"
@@ -292,7 +418,7 @@ export default function ClassView({ userProfile }) {
 
                             {/* Fila para Grado y Sección */}
                             <div style={{ display: 'flex', gap: '1.5rem', marginBottom: '1.5rem', textAlign: 'left' }}>
-                                
+
                                 {/* 2. Grado (Listbox) */}
                                 <div style={{ flex: 1 }}>
                                     <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', color: '#475569', marginBottom: '0.5rem', fontWeight: '600' }}>
@@ -300,6 +426,7 @@ export default function ClassView({ userProfile }) {
                                         Grado *
                                     </label>
                                     <select
+                                        name="gradeLevel"
                                         required
                                         style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '0.95rem', backgroundColor: 'white', boxSizing: 'border-box', outlineColor: '#d97706', color: '#64748b' }}
                                         defaultValue=""
@@ -320,6 +447,7 @@ export default function ClassView({ userProfile }) {
                                     </label>
                                     <select
                                         required
+                                        name="section"
                                         style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '0.95rem', backgroundColor: 'white', boxSizing: 'border-box', outlineColor: '#d97706', color: '#64748b' }}
                                         defaultValue=""
                                     >
@@ -339,6 +467,7 @@ export default function ClassView({ userProfile }) {
                                 </label>
                                 <select
                                     required
+                                    name="academicYear"
                                     style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '0.95rem', backgroundColor: 'white', boxSizing: 'border-box', outlineColor: '#d97706', color: '#334155' }}
                                     defaultValue="2026"
                                 >
@@ -347,6 +476,55 @@ export default function ClassView({ userProfile }) {
                                 </select>
                             </div>
 
+                            {/* approval */}
+                            <div style={{ marginBottom: '1.5rem', textAlign: 'left' }}>
+                                <label
+                                    htmlFor="classJoinMode"
+                                    style={{
+                                        display: 'block',
+                                        fontSize: '0.85rem',
+                                        color: '#475569',
+                                        marginBottom: '0.5rem',
+                                        fontWeight: '600'
+                                    }}
+                                >
+                                    Modo de ingreso a la clase
+                                </label>
+
+                                <select
+                                    id="classJoinMode"
+                                    name="joinMode"
+                                    defaultValue="approval"
+                                    required
+                                    style={{
+                                        width: '100%',
+                                        padding: '0.75rem 1rem',
+                                        borderRadius: '10px',
+                                        border: '1px solid #cbd5e1',
+                                        fontSize: '0.95rem',
+                                        backgroundColor: 'white',
+                                        color: '#334155'
+                                    }}
+                                >
+                                    <option value="approval">
+                                        Requiere aprobación del docente
+                                    </option>
+
+                                    <option value="automatic">
+                                        Ingreso automático con código
+                                    </option>
+                                </select>
+
+                                <p style={{
+                                    fontSize: '0.75rem',
+                                    color: '#64748b',
+                                    marginTop: '0.5rem'
+                                }}>
+                                    Podrás cambiar esta configuración después.
+                                </p>
+                            </div>
+
+
                             {/* 5. Descripción */}
                             <div style={{ marginBottom: '1.5rem', textAlign: 'left', position: 'relative' }}>
                                 <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', color: '#475569', marginBottom: '0.5rem', fontWeight: '600' }}>
@@ -354,6 +532,8 @@ export default function ClassView({ userProfile }) {
                                     Descripción (opcional)
                                 </label>
                                 <textarea
+                                    name="description"
+                                    maxLength={500}
                                     placeholder="Agrega una breve descripción de la clase, temas o información relevante..."
                                     rows="3"
                                     style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '0.95rem', resize: 'none', boxSizing: 'border-box', outlineColor: '#d97706', fontFamily: 'inherit', color: '#334155' }}
@@ -362,6 +542,19 @@ export default function ClassView({ userProfile }) {
                                     0/500
                                 </span>
                             </div>
+
+                            {createClassError && (
+                                <p
+                                    role="alert"
+                                    style={{
+                                        color: '#dc2626',
+                                        fontSize: '0.85rem',
+                                        marginBottom: '1rem'
+                                    }}
+                                >
+                                    {createClassError}
+                                </p>
+                            )}
 
                             {/* Acciones (Botones inferiores) */}
                             <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginTop: '2rem' }}>
@@ -374,6 +567,7 @@ export default function ClassView({ userProfile }) {
                                 </button>
                                 <button
                                     type="submit"
+                                    disabled={creatingClass}
                                     style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '0.75rem 1.5rem', backgroundColor: '#d97706', color: 'white', border: 'none', borderRadius: '30px', cursor: 'pointer', fontWeight: '700', fontSize: '0.95rem', minWidth: '150px' }}
                                 >
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
