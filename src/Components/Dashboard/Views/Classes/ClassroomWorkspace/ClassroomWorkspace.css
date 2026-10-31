@@ -1,0 +1,775 @@
+/* ============================================================
+   NEXORA · ClassroomWorkspace
+   Estilos consolidados para la vista de clase
+   ============================================================ */
+
+/* 1. Contenedor y cabecera */
+.cw-workspace {
+    --cw-container-gap: 15px;
+    
+    width: 100%;
+    min-height: 100%;
+    box-sizing: border-box;
+
+    padding: 20px;
+    background: #fafaf8;
+    color: #243247;
+    font-family: inherit;
+}
+
+.cw-header {
+    margin-bottom: 0;
+    border-bottom: none;
+}
+
+.cw-back {
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    color: #976510;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.cw-title-group {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+
+    background: #ffffff;
+    border: 1px solid #f0ece5;
+    border-radius: 16px 16px 0 0;
+
+    padding: 16px 24px;
+    margin-bottom: 0;
+}
+
+.cw-title-info {
+    min-width: 0;
+}
+
+.cw-eyebrow {
+    color: #ad791b;
+    font-size: 11.5px;
+    font-weight: 800;
+    letter-spacing: 0.09em;
+}
+
+.cw-title-group h1 {
+    margin: 0 0 5px;
+
+    color: #222c3c;
+    font-size: 21px;
+    font-weight: 750;
+    line-height: 1.3;
+    letter-spacing: -0.4px;
+}
+
+.cw-title-group p {
+    margin: 0;
+    color: #7c8491;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+
+/* Icono Lucide */
+
+.cw-header-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    width: 42px;
+    height: 42px;
+
+    background: #fff5dc;
+    color: #ba850e;
+    border-radius: 12px;
+}
+
+/* 2. Pestañas */
+.cw-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: var(--cw-container-gap);
+    padding: 0 20px;
+    overflow-x: auto;
+    background: #fff;
+    border: 1px solid #f0ece5;
+    border-top: 0;
+    border-radius: 0 0 18px 18px;
+}
+
+.cw-tab {
+    appearance: none;
+    padding: 17px 15px;
+    background: transparent;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    color: #5f6673;
+    font-size: 13px;
+    font-weight: 650;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: color 0.15s ease;
+}
+
+.cw-tab:hover,
+.cw-tab-active {
+    color: #91600c;
+}
+
+.cw-tab-active {
+    border-bottom-color: #d49a00;
+}
+
+/* 3. Distribución y tarjetas */
+.cw-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 2.05fr) minmax(260px, 1fr);
+    align-items: start;
+    gap: 18px;
+    column-gap: var(--cw-container-gap);
+    row-gap: var(--cw-container-gap);
+    align-items: start;
+}
+
+.cw-feed,
+.cw-aside {
+    display: flex;
+    flex-direction: column;
+    gap: var(--cw-container-gap);
+    min-width: 0;
+}
+
+.cw-composer,
+.cw-post,
+.cw-widget,
+.cw-empty,
+.cw-tab-content {
+    box-sizing: border-box;
+    background: #fff;
+    border: 1px solid #ededeb;
+    border-radius: 18px;
+    box-shadow:
+        0 2px 8px rgba(16, 24, 40, 0.025),
+        0 8px 24px rgba(16, 24, 40, 0.025);
+}
+
+/* 4. Compositor de publicaciones */
+.cw-composer {
+    width: 100%;
+    min-width: 0;
+    padding: 16px 18px;
+    border-radius: 19px;
+    container-type: inline-size;
+}
+
+.cw-composer-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    margin-bottom: 14px;
+}
+
+.cw-composer-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 48px;
+    width: 48px;
+    height: 48px;
+    overflow: hidden;
+    background: #f1f3f6;
+    border-radius: 50%;
+    color: #9a650c;
+    font-size: 15px;
+    font-weight: 750;
+}
+
+.cw-composer-avatar-image,
+.cw-post-avatar-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.cw-composer-input-wrap {
+    flex: 1;
+    min-width: 0;
+}
+
+.cw-composer textarea.cw-composer-input {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    height: 54px;
+    min-height: 54px;
+    max-height: 54px;
+    margin: 0;
+    padding: 15px 22px;
+    resize: none;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background: #f9fafb;
+    border: 1px solid #eceef1;
+    border-radius: 30px;
+    color: #293549;
+    font: inherit;
+    font-size: 14px;
+    line-height: 22px;
+    outline: none;
+    transition:
+        height 0.2s ease,
+        border-color 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.cw-composer textarea.cw-composer-input::placeholder {
+    color: #959ca8;
+    font-weight: 400;
+    opacity: 1;
+}
+
+.cw-composer textarea.cw-composer-input:focus {
+    height: 94px;
+    min-height: 94px;
+    max-height: 150px;
+    background: #fff;
+    border-color: #dcb65b;
+    border-radius: 18px;
+    box-shadow: 0 0 0 3px rgba(212, 154, 22, 0.10);
+}
+
+.cw-composer-bottom {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-width: 0;
+}
+
+.cw-composer-actions {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 7px;
+    min-width: 0;
+}
+
+.cw-composer-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    gap: 7px;
+    min-width: 0;
+    min-height: 38px;
+    padding: 6px 9px;
+    background: #fff;
+    border: 1px solid #e6e9ed;
+    border-radius: 10px;
+    color: #344054;
+    font-family: inherit;
+    font-size: 11.5px;
+    font-weight: 600;
+    line-height: 1.2;
+    white-space: nowrap;
+    box-shadow: 0 1px 3px rgba(16, 24, 40, 0.025);
+}
+
+.cw-composer-action:disabled {
+    cursor: not-allowed;
+}
+
+.cw-composer-action-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 25px;
+    width: 25px;
+    height: 25px;
+    border-radius: 7px;
+}
+
+.cw-composer-action-icon svg {
+    display: block;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+.cw-composer-action-icon-green  { background: #e5f7eb; color: #149653; }
+.cw-composer-action-icon-purple { background: #f0edff; color: #7160df; }
+.cw-composer-action-icon-yellow { background: #fff4db; color: #e2a00a; }
+.cw-composer-action-icon-blue   { background: #eaf1ff; color: #347bd8; }
+
+.cw-composer-submit {
+    box-sizing: border-box;
+    width: 116px;
+    min-width: 116px;
+    height: 39px;
+    padding: 0 14px;
+    background: linear-gradient(180deg, #d8a009, #ca9200);
+    border: 0;
+    border-radius: 9px;
+    color: #fff;
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 750;
+    white-space: nowrap;
+    box-shadow: none;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.cw-composer-submit:hover:not(:disabled) {
+    background: #b98400;
+    transform: translateY(-1px);
+}
+
+.cw-composer-submit:disabled {
+    opacity: 0.58;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* 5. Tarjetas de publicaciones */
+.cw-post {
+    padding: 20px 22px 18px;
+    border-color: #ece9e2;
+    border-radius: 22px;
+}
+
+.cw-post-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
+.cw-post-header-left {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    gap: 12px;
+    min-width: 0;
+}
+
+.cw-post-header-right {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    gap: 10px;
+}
+
+.cw-post-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 48px;
+    width: 48px;
+    height: 48px;
+    overflow: hidden;
+    background: #eef2f6;
+    border-radius: 50%;
+    color: #a36e12;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.cw-post-author {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+
+.cw-post-author strong {
+    margin: 0;
+    color: #1f2937;
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1.2;
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+}
+
+.cw-post-author span {
+    color: #8b93a1;
+    font-size: 12px;
+    line-height: 1.2;
+}
+
+.cw-post-type {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7px 12px;
+    background: #e9f8ee;
+    border-radius: 8px;
+    color: #1f8b4c;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.cw-post-menu {
+    padding: 6px 4px;
+    background: transparent;
+    border: 0;
+    border-radius: 8px;
+    color: #667085;
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.cw-post-menu:hover {
+    background: #f6f7f9;
+}
+
+.cw-post-body {
+    margin-bottom: 18px;
+}
+
+.cw-post-paragraph,
+.cw-post-content {
+    color: #243247;
+    font-size: 15px;
+    line-height: 1.75;
+    overflow-wrap: anywhere;
+}
+
+.cw-post-paragraph {
+    margin: 0 0 14px;
+    white-space: pre-wrap;
+}
+
+.cw-post-paragraph:last-child {
+    margin-bottom: 0;
+}
+
+/* Compatibilidad con tarjetas que aún usen un bloque plano. */
+.cw-post-content {
+    white-space: pre-wrap;
+}
+
+.cw-post-media {
+    margin: 10px 0 18px;
+    overflow: hidden;
+    background: #f7fafc;
+    border-radius: 18px;
+}
+
+.cw-post-media-image {
+    display: block;
+    width: 100%;
+    max-height: 330px;
+    object-fit: cover;
+}
+
+/* 6. Botones de la publicación: compactos */
+.cw-post-footer {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 9px;
+    margin-top: 6px;
+    padding-top: 12px;
+    border-top: 1px solid #eef1f4;
+}
+
+.cw-post-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    gap: 7px;
+    min-width: 0;
+    min-height: 36px;
+    padding: 7px 12px;
+    background: #fff;
+    border: 1px solid #e6e9ee;
+    border-radius: 9px;
+    color: #5c6675;
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 600;
+    line-height: 1.2;
+    white-space: nowrap;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.02);
+}
+
+.cw-post-action svg {
+    display: block;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+.cw-post-action-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    line-height: 1;
+}
+
+.cw-post-action-count {
+    color: inherit;
+    font-weight: 700;
+}
+
+.cw-post-action:disabled {
+    opacity: 1; /* Mantener legibles los botones aún no implementados */
+    cursor: not-allowed;
+}
+
+.cw-post-action-like {
+    cursor: pointer;
+}
+
+.cw-post-action-like:hover:not(:disabled) {
+    background: #f8fafc;
+    border-color: #dce3ea;
+}
+
+.cw-post-action-like-active {
+    background: #eef5ff;
+    border-color: #bfdbfe;
+    color: #2563eb;
+}
+
+.cw-post-action:focus-visible,
+.cw-post-menu:focus-visible,
+.cw-composer-submit:focus-visible,
+.cw-tab:focus-visible {
+    outline: 2px solid #d49a16;
+    outline-offset: 2px;
+}
+
+/* 7. Barra lateral y estados */
+.cw-widget {
+    padding: 20px;
+}
+
+.cw-widget h3 {
+    margin: 0 0 17px;
+    color: #273142;
+    font-size: 14px;
+    font-weight: 750;
+}
+
+.cw-widget p {
+    color: #667085;
+    font-size: 13.5px;
+    line-height: 1.6;
+}
+
+.cw-widget-row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f2f5;
+}
+
+.cw-widget-row:last-child {
+    border-bottom: 0;
+}
+
+.cw-widget-row span {
+    color: #929aa7;
+    font-size: 11px;
+}
+
+.cw-widget-row strong {
+    color: #354155;
+    font-size: 13px;
+}
+
+.cw-class-code {
+    padding: 15px;
+    background: #fff9e9;
+    border: 1px dashed #e6c16a;
+    border-radius: 10px;
+    color: #90600c;
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+.cw-empty {
+    padding: 40px 24px;
+    color: #667085;
+    text-align: center;
+}
+
+.cw-empty h3 {
+    margin: 0 0 8px;
+    color: #344054;
+}
+
+.cw-tab-content {
+    max-width: none;
+    padding: 24px;
+}
+
+.cw-error {
+    color: #b91c1c;
+}
+
+.cw-success {
+    color: #15803d;
+    font-weight: 600;
+}
+
+/* 8. Adaptación a pantallas pequeñas */
+@media (max-width: 1100px) {
+    .cw-layout {
+        grid-template-columns: minmax(0, 1fr);
+        gap: var(--cw-container-gap);
+    }
+
+    .cw-aside {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+}
+
+@media (max-width: 700px) {
+    .cw-post {
+        padding: 16px;
+        border-radius: 18px;
+    }
+
+    .cw-post-header {
+        gap: 12px;
+    }
+
+    .cw-post-header-right {
+        gap: 8px;
+    }
+
+    .cw-post-type {
+        padding: 6px 10px;
+        font-size: 11px;
+    }
+
+    .cw-post-footer {
+        gap: 8px;
+    }
+
+    .cw-post-action {
+        min-height: 34px;
+        padding: 7px 10px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 600px) {
+    .cw-workspace {
+        padding: 15px;
+    }
+
+     .cw-title-group {
+        padding: 14px 16px;
+    }
+
+    .cw-title-group h1 {
+        font-size: 18px;
+    }
+
+    .cw-header-icon {
+        width: 38px;
+        height: 38px;
+    }
+
+    .cw-tabs {
+        gap: 0;
+        padding: 0 8px;
+    }
+
+    .cw-tab {
+        padding: 14px 11px;
+        font-size: 12px;
+    }
+
+    .cw-composer,
+    .cw-widget {
+        padding: 16px;
+    }
+
+    .cw-tab-content {
+        padding: 14px;
+    }
+}
+
+/* Ajustes por el ancho del propio compositor, no por el viewport. */
+@container (max-width: 610px) {
+    .cw-composer-bottom {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 12px;
+    }
+
+    .cw-composer-actions {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .cw-composer-submit {
+        justify-self: end;
+    }
+}
+
+@container (max-width: 370px) {
+    .cw-composer-top {
+        gap: 9px;
+    }
+
+    .cw-composer-avatar {
+        flex-basis: 40px;
+        width: 40px;
+        height: 40px;
+    }
+
+    .cw-composer textarea.cw-composer-input {
+        padding: 15px 14px;
+        font-size: 12px;
+    }
+
+    .cw-composer-action {
+        padding: 6px 8px;
+        font-size: 11px;
+    }
+}
+
+/* Información: utilizar las tarjetas de ClassDetail
+   sin un contenedor blanco adicional. */
+
+.cw-tab-content--info {
+    max-width: none;
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+}

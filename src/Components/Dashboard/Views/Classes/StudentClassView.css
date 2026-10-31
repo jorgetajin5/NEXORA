@@ -183,3 +183,29 @@
         padding: 1.2rem;
     }
 }
+
+
+.scv-enter-class {
+    width: 100%;
+    margin-top: 1.2rem;
+    background: #d49a16;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 0.8rem 1rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.scv-enter-class:hover {
+    background: #b58306;
+}
+
+.scv-class-card {
+    cursor: pointer;
+}
+
+.scv-class-card:focus-visible {
+    outline: 3px solid #d49a16;
+    outline-offset: 3px;
+}

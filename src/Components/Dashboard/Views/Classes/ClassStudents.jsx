@@ -1,5 +1,6 @@
 
 import { useEffect, useState } from 'react';
+import { Search, UsersRound, UserRoundPlus, UserRound, BadgeCheck, CheckCircle2, AlertCircle } from 'lucide-react';
 import './ClassStudents.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
@@ -8,7 +9,8 @@ export default function ClassStudents({
     classroomId,
     firebaseUser,
     onBack,
-    onStudentsChanged
+    onStudentsChanged,
+    embedded = false
 }) {
     const [students, setStudents] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -209,178 +211,200 @@ export default function ClassStudents({
 
     return (
         <div className="class-students">
+            {!embedded && (
+                <button
+                    type="button"
+                    className="cs-back"
+                    onClick={onBack}
+                >
+                    ← Volver a detalles
+                </button>
+            )}
 
-            <button
-                type="button"
-                className="cs-back"
-                onClick={onBack}
-            >
-                ← Volver a detalles
-            </button>
-
-            <div className="cs-header">
-                <div>
-                    <h2>Estudiantes de la clase</h2>
-                    <p>Administra las matrículas y expedientes.</p>
-                </div>
-                <strong>{students.length} inscritos</strong>
-            </div>
-
-            <section className="cs-section">
-                <h3>Agregar estudiante</h3>
-                <p>
-                    Busca primero si el alumno ya está registrado
-                    para evitar crear expedientes duplicados.
-                </p>
-
-                <form onSubmit={handleSearch} className="cs-form">
-                    <div className="cs-fields">
-                        <label>
-                            Nombres
-                            <input
-                                required
-                                maxLength={120}
-                                value={firstName}
-                                onChange={(e) =>
-                                    changeName(setFirstName, e.target.value)
-                                }
-                                placeholder="Nombres del estudiante"
-                            />
-                        </label>
-
-                        <label>
-                            Apellidos
-                            <input
-                                required
-                                maxLength={120}
-                                value={lastName}
-                                onChange={(e) =>
-                                    changeName(setLastName, e.target.value)
-                                }
-                                placeholder="Apellidos del estudiante"
-                            />
-                        </label>
-                    </div>
-
-                    <button type="submit" disabled={busy}>
-                        {busy ? 'Procesando...' : 'Buscar estudiante'}
-                    </button>
-                </form>
-
-                {matches !== null && (
-                    <div className="cs-results">
-                        <h4>Resultados de la búsqueda</h4>
-
-                        {matches.length === 0 ? (
-                            <p>No hay coincidencias accesibles.</p>
-                        ) : (
-                            matches.map((student) => (
-                                <div className="cs-result" key={student.id}>
-                                    <div>
-                                        <strong>
-                                            {student.firstName} {student.lastName}
-                                        </strong>
-                                        <small>
-                                            {student.hasPersonalCode
-                                                ? 'Con Código Personal'
-                                                : 'Sin Código Personal'}
-                                        </small>
-                                    </div>
-
-                                    <button
-                                        type="button"
-                                        disabled={
-                                            busy || student.alreadyEnrolled
-                                        }
-                                        onClick={() =>
-                                            handleEnrollExisting(student.id)
-                                        }
-                                    >
-                                        {student.alreadyEnrolled
-                                            ? 'Ya inscrito'
-                                            : 'Incorporar'}
-                                    </button>
-                                </div>
-                            ))
-                        )}
-
-                        <div className="cs-new-student">
-                            <h4>Registrar estudiante nuevo</h4>
-
-                            <p>
-                                Hazlo únicamente si confirmaste que
-                                no corresponde a un expediente existente.
-                            </p>
-
-                            {matches.length > 0 && (
-                                <label className="cs-confirm">
-                                    <input
-                                        type="checkbox"
-                                        checked={confirmedDifferent}
-                                        onChange={(e) =>
-                                            setConfirmedDifferent(
-                                                e.target.checked
-                                            )
-                                        }
-                                    />
-                                    Confirmo que es una persona diferente
-                                    a las coincidencias encontradas.
-                                </label>
-                            )}
-
-                            <label className="cs-code-label">
-                                Código Personal MINEDUC (opcional)
-                                <input
-                                    value={personalCode}
-                                    maxLength={64}
-                                    onChange={(e) =>
-                                        setPersonalCode(e.target.value)
-                                    }
-                                    placeholder="Código Personal"
-                                    autoComplete="off"
-                                />
-                            </label>
-
-                            <button
-                                type="button"
-                                disabled={
-                                    busy ||
-                                    (matches.length > 0 && !confirmedDifferent)
-                                }
-                                onClick={handleCreateStudent}
-                            >
-                                Registrar estudiante nuevo
-                            </button>
+            <section className="cs-management-card" aria-labelledby="cs-management-title">
+                <header className="cs-header">
+                    <div className="cs-heading">
+                        <span className="cs-heading-icon" aria-hidden="true">
+                            <UsersRound size={21} strokeWidth={1.9} />
+                        </span>
+                        <div>
+                            <h2>Estudiantes</h2>
+                            <p>Gestiona las inscripciones y expedientes de esta clase.</p>
                         </div>
                     </div>
+                    <span className="cs-count">
+                        <UsersRound size={15} aria-hidden="true" />
+                        {students.length} {students.length === 1 ? 'inscrito' : 'inscritos'}
+                    </span>
+                </header>
+
+                {error && (
+                    <p className="cs-alert cs-error" role="alert">
+                        <AlertCircle size={17} aria-hidden="true" /> {error}
+                    </p>
                 )}
+                {success && (
+                    <p className="cs-alert cs-success" role="status">
+                        <CheckCircle2 size={17} aria-hidden="true" /> {success}
+                    </p>
+                )}
+
+                <div className="cs-management-body">
+                    <h3 id="cs-add-title">Agregar estudiante</h3>
+
+                    <form onSubmit={handleSearch} className="cs-form">
+                        <div className="cs-fields">
+                            <label>
+                                Nombres
+                                <input
+                                    required
+                                    maxLength={120}
+                                    value={firstName}
+                                    onChange={(event) =>
+                                        changeName(setFirstName, event.target.value)
+                                    }
+                                    placeholder="Nombres del estudiante"
+                                />
+                            </label>
+                            <label>
+                                Apellidos
+                                <input
+                                    required
+                                    maxLength={120}
+                                    value={lastName}
+                                    onChange={(event) =>
+                                        changeName(setLastName, event.target.value)
+                                    }
+                                    placeholder="Apellidos del estudiante"
+                                />
+                            </label>
+                        </div>
+                        <button className="cs-button cs-button--primary" type="submit" disabled={busy}>
+                            <Search size={16} aria-hidden="true" />
+                            {busy ? 'Procesando...' : 'Buscar estudiante'}
+                        </button>
+                    </form>
+
+                    {matches !== null && (
+                        <div className="cs-results">
+                            <h4>Coincidencias encontradas</h4>
+                            {matches.length === 0 ? (
+                                <p className="cs-no-matches">No encontramos expedientes accesibles con esos nombres.</p>
+                            ) : (
+                                <div className="cs-results-list">
+                                    {matches.map((student) => (
+                                        <div className="cs-result" key={student.id}>
+                                            <div className="cs-student-identity">
+                                                <span className="cs-student-avatar" aria-hidden="true">
+                                                    <UserRound size={18} />
+                                                </span>
+                                                <div className="cs-student-details">
+                                                    <strong>{student.firstName} {student.lastName}</strong>
+                                                    <small>
+                                                        {student.hasPersonalCode
+                                                            ? 'Expediente con Código Personal'
+                                                            : 'Expediente sin Código Personal'}
+                                                    </small>
+                                                </div>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                className="cs-button cs-button--secondary"
+                                                disabled={busy || student.alreadyEnrolled}
+                                                onClick={() => handleEnrollExisting(student.id)}
+                                            >
+                                                {student.alreadyEnrolled ? 'Ya inscrito' : 'Incorporar'}
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            <div className="cs-new-student">
+                                <div className="cs-section-heading cs-section-heading--small">
+                                    <span className="cs-section-icon cs-section-icon--neutral" aria-hidden="true">
+                                        <UserRoundPlus size={17} />
+                                    </span>
+                                    <div>
+                                        <h4>Registrar estudiante nuevo</h4>
+                                        <p>Solo si verificaste que no corresponde a un expediente existente.</p>
+                                    </div>
+                                </div>
+
+                                {matches.length > 0 && (
+                                    <label className="cs-confirm">
+                                        <input
+                                            type="checkbox"
+                                            checked={confirmedDifferent}
+                                            onChange={(event) =>
+                                                setConfirmedDifferent(event.target.checked)
+                                            }
+                                        />
+                                        <span>Confirmo que es una persona diferente a las coincidencias encontradas.</span>
+                                    </label>
+                                )}
+
+                                <label className="cs-code-label">
+                                    Código Personal MINEDUC (opcional)
+                                    <input
+                                        value={personalCode}
+                                        maxLength={64}
+                                        onChange={(event) => setPersonalCode(event.target.value)}
+                                        placeholder="Código Personal"
+                                        autoComplete="off"
+                                    />
+                                </label>
+
+                                <button
+                                    type="button"
+                                    className="cs-button cs-button--primary"
+                                    disabled={busy || (matches.length > 0 && !confirmedDifferent)}
+                                    onClick={handleCreateStudent}
+                                >
+                                    <UserRoundPlus size={16} aria-hidden="true" />
+                                    Registrar estudiante nuevo
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
             </section>
 
-            {error && <p className="cs-error" role="alert">{error}</p>}
-            {success && <p className="cs-success" role="status">{success}</p>}
-
-            <section className="cs-section">
-                <h3>Estudiantes inscritos</h3>
+            <section className="cs-section cs-enrolled-section" aria-labelledby="cs-list-title" >
+                <div className="cs-section-heading">
+                    <span className="cs-section-icon cs-section-icon--blue" aria-hidden="true">
+                        <UsersRound size={19} strokeWidth={2} />
+                    </span>
+                    <div>
+                        <h3 id="cs-list-title">Estudiantes inscritos</h3>
+                        <p>Miembros con matrícula activa en esta clase.</p>
+                    </div>
+                </div>
 
                 {loading ? (
-                    <p>Cargando estudiantes...</p>
+                    <p className="cs-empty">Cargando estudiantes...</p>
                 ) : students.length === 0 ? (
-                    <p>Aún no hay estudiantes inscritos.</p>
+                    <div className="cs-empty">Todavía no hay estudiantes inscritos.</div>
                 ) : (
                     <div className="cs-list">
                         {students.map((student) => (
-                            <div className="cs-result" key={student.id}>
-                                <div>
-                                    <strong>
-                                        {student.firstName} {student.lastName}
-                                    </strong>
-                                    <small>
-                                        {student.hasAccount
-                                            ? 'Con cuenta'
-                                            : 'Sin cuenta Firebase'}
-                                    </small>
+                            <div className="cs-result cs-enrolled-row" key={student.id}>
+                                <div className="cs-student-identity">
+                                    <span className="cs-student-avatar" aria-hidden="true">
+                                        <UserRound size={18} />
+                                    </span>
+                                    <div className="cs-student-details">
+                                        <strong>{student.firstName} {student.lastName}</strong>
+                                        <small>
+                                            {student.hasAccount
+                                                ? 'Con cuenta en Nexora'
+                                                : 'Sin cuenta Firebase'}
+                                        </small>
+                                    </div>
                                 </div>
-                                <span className="cs-active">Activo</span>
+                                <span className="cs-active">
+                                    <BadgeCheck size={14} aria-hidden="true" /> Activo
+                                </span>
                             </div>
                         ))}
                     </div>

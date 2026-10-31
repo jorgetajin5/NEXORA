@@ -1,5 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
+import { BookOpen, GraduationCap, Layers, CalendarDays, UsersRound, Hash, Settings2, School, ShieldCheck, CheckCircle2, Save, ClipboardList } from 'lucide-react';
 import './ClassDetail.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
@@ -10,7 +11,8 @@ export default function ClassDetail({
     onBack,
     onSettingsUpdated,
     onManageStudents,
-    onManageRequests
+    onManageRequests,
+    embedded = false
 }) {
     const [classroom, setClassroom] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -146,190 +148,195 @@ export default function ClassDetail({
 
 
     return (
-        <div className="class-detail">
-
+        <div className={`class-detail${embedded ? ' class-detail--embedded' : ''}`}>
             {loading ? (
-                <p>Cargando información de la clase...</p>
-
+                <p className="class-detail-feedback">Cargando información de la clase...</p>
             ) : error ? (
-                <p className="class-detail-error" role="alert">
-                    {error}
-                </p>
-
+                <p className="class-detail-error" role="alert">{error}</p>
             ) : classroom && (
                 <>
-                    <div className="class-detail-header">
-                        <div>
-                            <span className="class-detail-label">
-                                Mi aula
+                    {/* En el modal conservamos el encabezado con el nombre de la clase.
+                        En la pestaña no se repite: ya está visible arriba. */}
+                    {!embedded && (
+                        <header className="class-detail-header">
+                            <div className="class-detail-hero-main">
+                                <span className="class-detail-hero-icon" aria-hidden="true">
+                                    <BookOpen size={22} />
+                                </span>
+                                <div>
+                                    <span className="class-detail-label">Mi aula</span>
+                                    <h1>{classroom.name}</h1>
+                                    <p>{classroom.description || 'Sin descripción registrada.'}</p>
+                                </div>
+                            </div>
+                            <span className="class-detail-status">
+                                <CheckCircle2 size={15} aria-hidden="true" />
+                                Activa
                             </span>
+                        </header>
+                    )}
 
-                            <h1>{classroom.name}</h1>
-
-                            <p>
-                                {classroom.description ||
-                                    'Sin descripción registrada.'}
-                            </p>
+                    {/* Una sola tarjeta agrupa los datos académicos */}
+                    <section className="class-detail-section class-detail-overview" aria-labelledby="class-detail-overview-title">
+                        <div className="class-detail-section-heading">
+                            <span className="class-detail-section-icon" aria-hidden="true">
+                                <BookOpen size={19} strokeWidth={1.9} />
+                            </span>
+                            <div className="class-detail-heading-text">
+                                <h2 id="class-detail-overview-title">Información general</h2>
+                                <p>{classroom.description || 'Datos académicos y participantes de esta clase.'}</p>
+                            </div>
+                            {embedded && (
+                                <span className="class-detail-status">
+                                    <CheckCircle2 size={15} aria-hidden="true" />
+                                    Activa
+                                </span>
+                            )}
                         </div>
 
-                        <span className="class-detail-status">
-                            Activa
-                        </span>
-                    </div>
+                        <div className="class-detail-grid">
+                            <div className="class-detail-card">
+                                <span className="class-detail-card-icon" aria-hidden="true"><GraduationCap size={18} /></span>
+                                <span>Grado</span>
+                                <strong>{classroom.gradeLevel || 'Sin asignar'}</strong>
+                            </div>
+                            <div className="class-detail-card">
+                                <span className="class-detail-card-icon" aria-hidden="true"><Layers size={18} /></span>
+                                <span>Sección</span>
+                                <strong>{classroom.section || 'Sin asignar'}</strong>
+                            </div>
+                            <div className="class-detail-card">
+                                <span className="class-detail-card-icon" aria-hidden="true"><CalendarDays size={18} /></span>
+                                <span>Año escolar</span>
+                                <strong>{classroom.academicYear || 'Sin asignar'}</strong>
+                            </div>
+                            <div className="class-detail-card">
+                                <span className="class-detail-card-icon" aria-hidden="true"><UsersRound size={18} /></span>
+                                <span>Estudiantes</span>
+                                <strong>{classroom.students ?? 0}</strong>
+                            </div>
+                        </div>
+                    </section>
 
-                    <div className="class-detail-grid">
-
-                        <div className="class-detail-card">
-                            <span>Grado</span>
-                            <strong>
-                                {classroom.gradeLevel || 'Sin asignar'}
-                            </strong>
+                    {/* Código de acceso y configuración funcional existente */}
+                    <section className="class-detail-section class-detail-access" aria-labelledby="class-detail-access-title">
+                        <div className="class-detail-section-heading">
+                            <span className="class-detail-section-icon class-detail-section-icon--gold" aria-hidden="true">
+                                <Settings2 size={19} strokeWidth={1.9} />
+                            </span>
+                            <div className="class-detail-heading-text">
+                                <h2 id="class-detail-access-title">Acceso e inscripciones</h2>
+                                <p>Administra cómo los estudiantes pueden unirse a esta clase.</p>
+                            </div>
                         </div>
 
-                        <div className="class-detail-card">
-                            <span>Sección</span>
-                            <strong>
-                                {classroom.section || 'Sin asignar'}
-                            </strong>
+                        <div className="class-detail-code-row">
+                            <div className="class-detail-code-label">
+                                <Hash size={17} aria-hidden="true" />
+                                <span>Código de clase</span>
+                            </div>
+                            <strong className="class-detail-code">{classroom.classCode}</strong>
                         </div>
-
-                        <div className="class-detail-card">
-                            <span>Año escolar</span>
-                            <strong>
-                                {classroom.academicYear || 'Sin asignar'}
-                            </strong>
-                        </div>
-
-                        <div className="class-detail-card">
-                            <span>Estudiantes inscritos</span>
-                            <strong>{classroom.students}</strong>
-                        </div>
-
-                    </div>
-
-                    <div className="class-detail-section">
-                        <h2>Información de la clase</h2>
-
-                        <div className="class-detail-row">
-                            <span>Código de clase</span>
-                            <strong>{classroom.classCode}</strong>
-                        </div>
-
 
                         <div className="class-detail-join-settings">
-
                             <h3>Configuración de ingreso</h3>
 
-                            {/* Modo de ingreso */}
                             <div className="class-detail-setting-field">
-                                <label htmlFor="detailJoinMode">
-                                    Modo de ingreso
-                                </label>
-
+                                <label htmlFor="detailJoinMode">Modo de ingreso</label>
                                 <select
                                     id="detailJoinMode"
                                     value={joinMode}
-                                    onChange={(e) => {
-                                        setJoinMode(e.target.value);
+                                    onChange={(event) => {
+                                        setJoinMode(event.target.value);
                                         setSettingsSuccess('');
                                     }}
                                     disabled={savingSettings}
                                     className="class-detail-select"
                                 >
-                                    <option value="approval">
-                                        Requiere aprobación del docente
-                                    </option>
-
-                                    <option value="automatic">
-                                        Ingreso automático con código
-                                    </option>
+                                    <option value="approval">Requiere aprobación del docente</option>
+                                    <option value="automatic">Ingreso automático con código</option>
                                 </select>
                             </div>
 
-                            {/* Habilitar o deshabilitar inscripciones */}
-                            <label className="class-detail-checkbox">
-                                <input
-                                    type="checkbox"
-                                    checked={joinEnabled}
-                                    disabled={savingSettings}
-                                    onChange={(e) => {
-                                        setJoinEnabled(e.target.checked);
-                                        setSettingsSuccess('');
-                                    }}
-                                />
+                            <div className="class-detail-join-footer">
+                                <label className="class-detail-checkbox">
+                                    <input
+                                        type="checkbox"
+                                        checked={joinEnabled}
+                                        disabled={savingSettings}
+                                        onChange={(event) => {
+                                            setJoinEnabled(event.target.checked);
+                                            setSettingsSuccess('');
+                                        }}
+                                    />
+                                    Permitir nuevas inscripciones
+                                </label>
 
-                                Permitir nuevas inscripciones
-                            </label>
+                                <button
+                                    type="button"
+                                    className="class-detail-save"
+                                    onClick={handleSaveSettings}
+                                    disabled={
+                                        savingSettings ||
+                                        (joinMode === classroom.joinMode &&
+                                            joinEnabled === classroom.joinEnabled)
+                                    }
+                                >
+                                    <Save size={16} aria-hidden="true" />
+                                    {savingSettings ? 'Guardando...' : 'Guardar cambios'}
+                                </button>
+                            </div>
 
-                            {/* Mensajes */}
                             {settingsError && (
-                                <p role="alert" className="class-detail-error">
-                                    {settingsError}
-                                </p>
+                                <p className="class-detail-error" role="alert">{settingsError}</p>
                             )}
-
                             {settingsSuccess && (
-                                <p role="status" className="class-detail-success">
+                                <p className="class-detail-success" role="status">
+                                    <CheckCircle2 size={16} aria-hidden="true" />
                                     {settingsSuccess}
                                 </p>
                             )}
-
-                            {/* Guardar cambios */}
-                            <button
-                                type="button"
-                                className="class-detail-save"
-                                onClick={handleSaveSettings}
-                                disabled={
-                                    savingSettings ||
-                                    (
-                                        joinMode === classroom.joinMode &&
-                                        joinEnabled === classroom.joinEnabled
-                                    )
-                                }
-                            >
-                                {savingSettings
-                                    ? 'Guardando...'
-                                    : 'Guardar configuración'}
-                            </button>
-
                         </div>
+                    </section>
 
-
+                    <section className="class-detail-section class-detail-extra" aria-labelledby="class-detail-extra-title">
+                        <div className="class-detail-section-heading">
+                            <span className="class-detail-section-icon" aria-hidden="true">
+                                <School size={19} strokeWidth={1.9} />
+                            </span>
+                            <div className="class-detail-heading-text">
+                                <h2 id="class-detail-extra-title">Información adicional</h2>
+                                <p>Institución y participación dentro de la clase.</p>
+                            </div>
+                        </div>
                         <div className="class-detail-row">
-                            <span>Colegio</span>
-                            <strong>
-                                {classroom.schoolName ||
-                                    'Clase independiente'}
-                            </strong>
+                            <span><School size={17} aria-hidden="true" /> Colegio</span>
+                            <strong>{classroom.schoolName || 'Clase independiente'}</strong>
                         </div>
-
                         <div className="class-detail-row">
-                            <span>Tu participación</span>
-                            <strong>
-                                {classroom.memberRole === 'OWNER'
-                                    ? 'Propietario'
-                                    : 'Docente'}
-                            </strong>
+                            <span><ShieldCheck size={17} aria-hidden="true" /> Tu participación</span>
+                            <strong>{classroom.memberRole === 'OWNER' ? 'Propietario' : 'Docente'}</strong>
                         </div>
 
-                        <button
-                            type="button"
-                            className="class-detail-save"
-                            onClick={onManageStudents}
-                            style={{ marginTop: '1.5rem' }}
-                        >
-                            Gestionar estudiantes
-                        </button>
-
-                        <button
-                            type="button"
-                            className="class-detail-save"
-                            onClick={onManageRequests}
-                            style={{ marginTop: '0.75rem' }}
-                        >
-                            Solicitudes de ingreso
-                        </button>
-                    </div>
+                        {/* Estos accesos solo se muestran en el modal antiguo.
+                            En la pestaña serían botones redundantes. */}
+                        {!embedded && (onManageStudents || onManageRequests) && (
+                            <div className="class-detail-quick-actions">
+                                {onManageStudents && (
+                                    <button type="button" className="class-detail-secondary" onClick={onManageStudents}>
+                                        <UsersRound size={16} aria-hidden="true" />
+                                        Gestionar estudiantes
+                                    </button>
+                                )}
+                                {onManageRequests && (
+                                    <button type="button" className="class-detail-secondary" onClick={onManageRequests}>
+                                        <ClipboardList size={16} aria-hidden="true" />
+                                        Solicitudes de ingreso
+                                    </button>
+                                )}
+                            </div>
+                        )}
+                    </section>
                 </>
             )}
         </div>

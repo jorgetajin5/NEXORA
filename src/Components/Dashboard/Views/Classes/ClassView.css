@@ -379,3 +379,18 @@
         padding: 1.5rem;
     }
 }
+
+.cv-class-card {
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cv-class-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(29, 41, 57, 0.08);
+}
+
+.cv-class-card:focus-visible {
+    outline: 3px solid #d49a16;
+    outline-offset: 3px;
+}

@@ -1,174 +1,550 @@
-
+/* Nexora · Gestión de estudiantes */
 .class-students {
+    --cs-gap: 15px;
     width: 100%;
-    color: #334155;
+    min-width: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: var(--cs-gap);
+    color: #233047;
+    font-family: inherit;
 }
 
 .cs-back {
-    border: none;
+    align-self: flex-start;
+    border: 0;
     background: transparent;
-    color: #b7791f;
-    font-weight: 700;
+    color: #a56d0b;
+    padding: 3px 0;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 650;
     cursor: pointer;
-    margin-bottom: 1rem;
+}
+
+.cs-header,
+.cs-section {
+    min-width: 0;
+    box-sizing: border-box;
+    background: #fff;
+    border: 1px solid #efebe4;
+    border-radius: 18px;
+    box-shadow: 0 3px 16px rgba(16, 24, 40, 0.035);
 }
 
 .cs-header {
+    padding: 17px 20px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+    justify-content: space-between;
+    gap: 15px;
 }
 
-.cs-header h2 {
-    margin: 0 0 0.4rem;
+.cs-heading,
+.cs-section-heading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.cs-section-heading h3 {
+    margin: 0 0 4px;
     color: #172033;
+    font-size: 17px;
+    font-weight: 800;
+    line-height: 1.25;
 }
 
-.cs-header p,
+.cs-section-heading p {
+    margin: 0;
+    color: #7f8ba0;
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.cs-students-list {
+    border-top: 1px solid #edf0f3;
+    padding-top: 16px;
+}
+
+.cs-student-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+
+    padding: 14px 0;
+}
+
+.cs-student-row + .cs-student-row {
+    border-top: 1px solid #f1f3f6;
+}
+
+.cs-heading-icon,
+.cs-section-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+
+    background: #eef4ff;
+    color: #6a88c9;
+}
+
+.cs-section-icon--blue {
+    background: #ecf3ff;
+    color: #5279c1;
+}
+
+.cs-section-icon--neutral {
+    background: #f4f5f7;
+    color: #657386;
+}
+
+.cs-heading h2,
+.cs-section h3,
+.cs-new-student h4 {
+    margin: 0;
+    color: #1b283d;
+    font-weight: 750;
+    letter-spacing: -0.02em;
+}
+
+.cs-heading h2 { font-size: 19px; }
+.cs-section h3 { font-size: 16px; }
+.cs-new-student h4 { font-size: 14px; }
+
+.cs-heading p,
 .cs-section p {
-    color: #64748b;
-    font-size: 0.9rem;
+    margin: 4px 0 0;
+    color: #8995a7;
+    font-size: 12.5px;
     line-height: 1.5;
 }
 
-.cs-header > strong {
+.cs-count {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 11px;
+    flex-shrink: 0;
+    border-radius: 999px;
+    background: #fff4dd;
+    color: #9d6807;
+    font-size: 12px;
+    font-weight: 750;
     white-space: nowrap;
-    background: #fef3c7;
-    color: #92400e;
-    padding: 0.5rem 0.8rem;
-    border-radius: 30px;
 }
 
 .cs-section {
-    border: 1px solid #e2e8f0;
-    background: white;
-    border-radius: 14px;
-    padding: 1.5rem;
-    margin-bottom: 1.25rem;
+    padding: 20px;
 }
 
-.cs-section h3 {
-    margin: 0 0 0.7rem;
-    color: #172033;
+.cs-section-heading {
+    margin-bottom: 16px;
 }
+
+.cs-section-heading--small {
+    margin-bottom: 12px;
+}
+
+.cs-section-heading--small .cs-section-icon {
+    width: 34px;
+    height: 34px;
+    flex-basis: 34px;
+}
+
+.cs-form { min-width: 0; }
 
 .cs-fields {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1rem;
-    margin: 1rem 0;
+    gap: 15px;
+    margin-bottom: 14px;
 }
 
 .cs-fields label,
 .cs-code-label {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    font-size: 0.85rem;
-    font-weight: 600;
+    gap: 7px;
+    min-width: 0;
+    color: #344154;
+    font-size: 12.5px;
+    font-weight: 650;
 }
 
 .cs-fields input,
 .cs-code-label input {
-    width: 100%;
     box-sizing: border-box;
-    padding: 0.8rem;
-    border: 1px solid #cbd5e1;
+    width: 100%;
+    min-width: 0;
+    height: 42px;
+    padding: 0 13px;
+    border: 1px solid #dce4ed;
     border-radius: 10px;
+    background: #fff;
+    color: #243247;
     font: inherit;
+    font-weight: 400;
+    font-size: 13px;
+    transition: border-color .2s, box-shadow .2s;
 }
 
-.cs-section button[type="submit"],
-.cs-section button[type="button"] {
-    border: none;
+.cs-fields input::placeholder,
+.cs-code-label input::placeholder { color: #a0a9b7; }
+
+.cs-fields input:focus,
+.cs-code-label input:focus {
+    outline: none;
+    border-color: #d5aa46;
+    box-shadow: 0 0 0 3px rgba(213, 170, 70, .12);
+}
+
+.cs-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 39px;
+    padding: 9px 15px;
     border-radius: 9px;
-    padding: 0.75rem 1rem;
-    background: #d97706;
-    color: white;
-    cursor: pointer;
+    font-family: inherit;
+    font-size: 12.5px;
     font-weight: 700;
+    line-height: 1.2;
+    cursor: pointer;
+    transition: background .15s, border-color .15s;
 }
 
-.cs-section button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+.cs-button--primary {
+    border: 1px solid #c8920c;
+    background: #d39b17;
+    color: #fff;
 }
+
+.cs-button--primary:hover:not(:disabled) { background: #b9840c; }
+
+.cs-button--secondary {
+    border: 1px solid #e3e8ee;
+    color: #43546a;
+    background: #fff;
+}
+
+.cs-button--secondary:hover:not(:disabled) { background: #f5f7fa; }
+
+.cs-button:disabled { opacity: .55; cursor: not-allowed; }
 
 .cs-results {
-    margin-top: 1.5rem;
-    border-top: 1px solid #e2e8f0;
-    padding-top: 1rem;
+    border-top: 1px solid #edf0f3;
+    padding-top: 16px;
+    margin-top: 18px;
+}
+
+.cs-results > h4 {
+    margin: 0 0 12px;
+    color: #27344a;
+    font-size: 13.5px;
+}
+
+.cs-results-list,
+.cs-list {
+    display: flex;
+    flex-direction: column;
 }
 
 .cs-result {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    gap: 1rem;
-    border-bottom: 1px solid #f1f5f9;
-    padding: 0.9rem 0;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 13px 0;
+    border-bottom: 1px solid #eef1f4;
 }
 
-.cs-result > div {
+.cs-result:first-child { padding-top: 6px; }
+.cs-result:last-child { border-bottom: 0; padding-bottom: 3px; }
+
+.cs-student-identity {
     display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
+    align-items: center;
+    gap: 11px;
+    min-width: 0;
 }
 
-.cs-result small {
+.cs-student-avatar {
+    flex: 0 0 38px;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #edf1f6;
     color: #64748b;
 }
 
+.cs-student-details {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+
+.cs-student-details strong {
+    color: #253248;
+    font-size: 13px;
+    font-weight: 750;
+    overflow-wrap: anywhere;
+}
+
+.cs-student-details small {
+    color: #8995a7;
+    font-size: 11.5px;
+}
+
 .cs-new-student {
-    margin-top: 1.3rem;
-    padding: 1.25rem;
-    background: #fffbeb;
-    border: 1px solid #fde68a;
+    margin-top: 15px;
+    padding: 16px;
+    background: #fffbf2;
+    border: 1px solid #f1e4c7;
     border-radius: 12px;
 }
 
-.cs-code-label {
-    margin: 1rem 0;
-}
+.cs-code-label { margin: 13px 0; }
 
 .cs-confirm {
     display: flex;
     align-items: flex-start;
-    gap: 0.5rem;
-    margin-top: 1rem;
-    font-size: 0.85rem;
+    gap: 9px;
+    margin-top: 13px;
+    color: #4a5567;
+    font-size: 12.5px;
+    line-height: 1.5;
 }
+
+.cs-confirm input { accent-color: #ca9200; margin-top: 3px; }
 
 .cs-active {
-    color: #15803d;
-    background: #dcfce7;
-    border-radius: 20px;
-    padding: 0.4rem 0.7rem;
-    font-size: 0.8rem;
-    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    flex-shrink: 0;
+    padding: 6px 9px;
+    border-radius: 999px;
+    background: #e7f7ed;
+    color: #198250;
+    font-size: 11.5px;
+    font-weight: 750;
 }
 
-.cs-error {
-    color: #b91c1c;
+.cs-empty,
+.cs-no-matches {
+    padding: 14px;
+    border-radius: 10px;
+    background: #f7f9fb;
+    color: #798595;
+    text-align: center;
+    font-size: 13px;
 }
 
-.cs-success {
-    color: #15803d;
+.cs-alert {
+    display: flex;
+    gap: 9px;
+    align-items: center;
+    padding: 12px 14px;
+    margin: 0;
+    border: 1px solid;
+    border-radius: 10px;
+    font-size: 12.5px;
 }
 
-@media (max-width: 600px) {
-    .cs-fields {
+.cs-error { color: #ad3535; border-color: #f6d0d0; background: #fff4f4; }
+.cs-success { color: #19774a; border-color: #c9e9d5; background: #f0fbf4; }
+
+@media (max-width: 650px) {
+    .cs-header { flex-wrap: wrap; padding: 15px; }
+    .cs-section { padding: 15px; }
+    .cs-fields { grid-template-columns: 1fr; gap: 12px; }
+    .cs-count { margin-left: 0; }
+    .cs-result { align-items: flex-start; }
+    .cs-result .cs-button { flex-shrink: 0; }
+}
+
+@media (max-width: 420px) {
+    .cs-result { flex-wrap: wrap; }
+    .cs-result .cs-button { margin-left: 49px; }
+}
+
+
+/* ==========================================
+   ESTUDIANTES - TARJETA UNIFICADA
+   ========================================== */
+
+.cs-management-card {
+    background: #ffffff;
+    border: 1px solid #eee9e1;
+    border-radius: 18px;
+    padding: 20px 24px;
+    box-shadow: 0 4px 18px rgba(16, 24, 40, 0.03);
+}
+
+/* El encabezado deja de ser una tarjeta aparte */
+
+.cs-management-card .cs-header {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+
+    padding: 0 0 15px;
+    margin: 0 0 15px;
+
+    border-bottom: 1px solid #edf0f3;
+}
+
+/* Conservar el contador compacto */
+
+.cs-management-card .cs-count {
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* Formulario dentro de la tarjeta */
+
+.cs-management-body {
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    border: none;
+}
+
+.cs-management-body h3 {
+    margin: 0 0 14px;
+    color: #243247;
+    font-size: 15px;
+    font-weight: 750;
+}
+
+/* Campos con separación uniforme */
+
+.cs-management-body .cs-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 15px;
+    margin: 0 0 12px;
+}
+
+/* Botón compacto alineado a la derecha */
+
+.cs-management-body .cs-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.cs-management-body .cs-form > button {
+    align-self: flex-end;
+    min-height: 38px;
+    padding: 8px 14px;
+    font-size: 12px;
+}
+
+/* Mantener el mismo espacio entre las dos tarjetas */
+
+.class-students {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.class-students > .cs-section {
+    margin: 0;
+}
+
+/* Adaptación móvil */
+
+@media (max-width: 700px) {
+    .cs-management-card {
+        padding: 16px;
+    }
+
+    .cs-management-body .cs-fields {
         grid-template-columns: 1fr;
     }
 
-    .cs-header {
-        align-items: flex-start;
-        flex-direction: column;
-    }
-
-    .cs-section {
-        padding: 1rem;
+    .cs-management-body .cs-form > button {
+        width: 100%;
     }
 }
+
+
+/* ==========================================
+   ESTUDIANTES INSCRITOS - SEPARACIÓN VISUAL
+   ========================================== */
+
+/* Encabezado separado del listado */
+.cs-enrolled-section .cs-section-heading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    margin: 0 0 12px;
+    padding-bottom: 16px;
+
+    border-bottom: 1px solid #e9edf2;
+}
+
+/* Título con mayor jerarquía */
+.cs-enrolled-section .cs-section-heading h3 {
+    margin: 0 0 5px;
+    color: #172033;
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1.3;
+}
+
+/* Descripción secundaria */
+.cs-enrolled-section .cs-section-heading p {
+    margin: 0;
+    color: #8995a7;
+    font-size: 12.5px;
+}
+
+/* Lista de alumnos */
+.cs-enrolled-section .cs-list {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    margin: 0;
+}
+
+/* Filas de alumnos */
+.cs-enrolled-section .cs-enrolled-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+
+    padding: 13px 0;
+    border-bottom: 1px solid #f0f2f5;
+}
+
+/* Primera fila */
+.cs-enrolled-section .cs-enrolled-row:first-child {
+    padding-top: 8px;
+}
+
+/* Última fila */
+.cs-enrolled-section .cs-enrolled-row:last-child {
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+
+

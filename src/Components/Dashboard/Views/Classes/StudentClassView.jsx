@@ -6,7 +6,7 @@ const API_URL =
     import.meta.env.VITE_API_URL ||
     'http://localhost:3000';
 
-export default function StudentClassView({ firebaseUser }) {
+export default function StudentClassView({ firebaseUser, onOpenClass }) {
     const [classes, setClasses] = useState([]);
     const [requests, setRequests] = useState([]);
     const [classCode, setClassCode] = useState('');
@@ -241,6 +241,17 @@ export default function StudentClassView({ firebaseUser }) {
                                 {cls.schoolName && (
                                     <small>{cls.schoolName}</small>
                                 )}
+
+                                <button
+                                    type="button"
+                                    className="scv-enter-class"
+                                    onClick={(event) => {
+                                        event.stopPropagation();
+                                        onOpenClass?.(cls);
+                                    }}
+                                >
+                                    Entrar a clase
+                                </button>
                             </article>
                         ))}
                     </div>
@@ -255,7 +266,18 @@ export default function StudentClassView({ firebaseUser }) {
                         {requests.map((request) => (
                             <article
                                 className="scv-class-card"
-                                key={request.id}
+                                key={cls.id}
+                                onClick={() => onOpenClass?.(cls)}
+                                onKeyDown={(event) => {
+                                    if (
+                                        event.target === event.currentTarget &&
+                                        (event.key === 'Enter' || event.key === ' ')
+                                    ) {
+                                        event.preventDefault();
+                                        onOpenClass?.(cls);
+                                    }
+                                }}
+                                tabIndex={0}
                             >
                                 <span className="scv-pending">
                                     Pendiente de aprobación

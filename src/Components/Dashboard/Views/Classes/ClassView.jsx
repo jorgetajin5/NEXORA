@@ -5,7 +5,8 @@ import { createPortal } from 'react-dom';
 import ClassStudents from './ClassStudents';
 import ClassJoinRequests from './ClassJoinRequests';
 
-export default function ClassView({ userProfile, firebaseUser }) {
+
+export default function ClassView({ userProfile, firebaseUser, onOpenClass }) {
     // asignamos un rol por defecto si aún no carga
     const role = userProfile?.rol || 'docente';
 
@@ -265,8 +266,25 @@ export default function ClassView({ userProfile, firebaseUser }) {
                 </p>
             ) : classes.length > 0 ? (
                 <div className="cv-classes-grid">
+
                     {classes.map((cls) => (
-                        <div className="cv-class-card" key={cls.id}>
+                        <div
+                            className="cv-class-card"
+                            key={cls.id}
+                            onClick={() => onOpenClass?.(cls)}
+                            onKeyDown={(event) => {
+                                if (
+                                    event.target === event.currentTarget &&
+                                    (event.key === 'Enter' || event.key === ' ')
+                                ) {
+                                    event.preventDefault();
+                                    onOpenClass?.(cls);
+                                }
+                            }}
+                            tabIndex={0}
+                            aria-label={`Entrar a la clase ${cls.title}`}
+                        >
+
                             <div className="cv-card-header">
                                 <span
                                     className="cv-tag"
@@ -335,14 +353,26 @@ export default function ClassView({ userProfile, firebaseUser }) {
                             </div>
 
                             <div className="cv-card-footer">
-                                <button type="button" className="cv-btn-view" onClick={() => { setSelectedClassId(cls.id); setModalSection('details'); }} >
+                                <button type="button" className="cv-btn-view" onClick={(event) => { event.stopPropagation(); onOpenClass?.(cls); }} >
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="16" height="16">
                                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                                         <circle cx="12" cy="12" r="3"></circle>
                                     </svg>
-                                    Ver clase
+                                    Entrar a clase
                                 </button>
-                                <button className="cv-btn-more">•••</button>
+                                <button
+                                    type="button"
+                                    className="cv-btn-more"
+                                    title="Ver detalles de la clase"
+                                    aria-label={`Ver detalles de ${cls.title}`}
+                                    onClick={(event) => {
+                                        event.stopPropagation();
+                                        setSelectedClassId(cls.id);
+                                        setModalSection('details');
+                                    }}
+                                >
+                                    •••
+                                </button>
                             </div>
                         </div>
                     ))}

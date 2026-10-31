@@ -1,5 +1,16 @@
-
 import { useEffect, useState } from 'react';
+import {
+    ArrowLeft,
+    ClipboardCheck,
+    Clock3,
+    Inbox,
+    UserRound,
+    CalendarDays,
+    Check,
+    X,
+    AlertCircle,
+    CheckCircle2
+} from 'lucide-react';
 import './ClassJoinRequests.css';
 
 const API_URL =
@@ -9,7 +20,8 @@ export default function ClassJoinRequests({
     classroomId,
     firebaseUser,
     onBack,
-    onApproved
+    onApproved,
+    embedded = false
 }) {
     const [requests, setRequests] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -43,7 +55,6 @@ export default function ClassJoinRequests({
         const data = await apiRequest(
             `/api/classrooms/${classroomId}/join-requests`
         );
-
         setRequests(data.requests);
     };
 
@@ -53,6 +64,7 @@ export default function ClassJoinRequests({
         let active = true;
 
         const load = async () => {
+            setLoading(true);
             try {
                 const data = await apiRequest(
                     `/api/classrooms/${classroomId}/join-requests`
@@ -74,10 +86,9 @@ export default function ClassJoinRequests({
     }, [classroomId, firebaseUser]);
 
     const handleReview = async (requestId, decision) => {
-        if (processingId) return;
+        if (processingId !== null) return;
 
         const isApproval = decision === 'approved';
-
         const confirmed = window.confirm(
             isApproval
                 ? '¿Aprobar la solicitud e inscribir al estudiante?'
@@ -102,11 +113,10 @@ export default function ClassJoinRequests({
                 }
             );
 
-            // Actualizar inmediatamente el listado
+            // Mantener el comportamiento original: quitar del listado
+            // la solicitud resuelta sin recargar toda la página.
             setRequests((previous) =>
-                previous.filter((request) =>
-                    request.id !== requestId
-                )
+                previous.filter((request) => request.id !== requestId)
             );
 
             setSuccess(result.message);
@@ -114,16 +124,14 @@ export default function ClassJoinRequests({
             if (isApproval) {
                 onApproved?.();
             }
-
         } catch (err) {
             setError(err.message);
 
-            // Si otra persona ya resolvió la solicitud,
-            // actualizar el listado desde PostgreSQL.
+            // Si se resolvió desde otra sesión, actualizar la lista.
             try {
                 await loadRequests();
             } catch {
-                // Conservamos el mensaje principal.
+                // Conservar el error principal.
             }
         } finally {
             setProcessingId(null);
@@ -132,111 +140,126 @@ export default function ClassJoinRequests({
 
     return (
         <div className="cjr-container">
-            <button
-                type="button"
-                className="cjr-back"
-                onClick={onBack}
-            >
-                ← Volver a detalles
-            </button>
+            {/* {!embedded && (
+                <button
+                    type="button"
+                    className="cjr-back"
+                    onClick={onBack}
+                >
+                    <ArrowLeft size={16} aria-hidden="true" />
+                    Volver a detalles
+                </button>
+            )} */}
 
-            <div className="cjr-header">
-                <div>
-                    <h2>Solicitudes de ingreso</h2>
-                    <p>
-                        Aprueba o rechaza los estudiantes
-                        que solicitaron entrar a esta clase.
+            <section className="cjr-panel" aria-labelledby="cjr-title">
+                <header className="cjr-header">
+                    <div className="cjr-heading">
+                        <span className="cjr-heading-icon" aria-hidden="true">
+                            <ClipboardCheck size={21} strokeWidth={1.9} />
+                        </span>
+                        <div className="cjr-heading-text">
+                            <h2 id="cjr-title">Solicitudes de ingreso</h2>
+                            <p>
+                                Revisa y administra las solicitudes de nuevos estudiantes.
+                            </p>
+                        </div>
+                    </div>
+                    <span className="cjr-count">
+                        <Clock3 size={15} aria-hidden="true" />
+                        {requests.length}{' '}
+                        {requests.length === 1 ? 'pendiente' : 'pendientes'}
+                    </span>
+                </header>
+
+                {error && (
+                    <p className="cjr-alert cjr-error" role="alert">
+                        <AlertCircle size={17} aria-hidden="true" />
+                        {error}
                     </p>
-                </div>
+                )}
 
-                <span className="cjr-count">
-                    {requests.length} pendientes
-                </span>
-            </div>
-
-            {error && (
-                <p className="cjr-error" role="alert">
-                    {error}
-                </p>
-            )}
-
-            {success && (
-                <p className="cjr-success" role="status">
-                    {success}
-                </p>
-            )}
-
-            {loading ? (
-                <p>Cargando solicitudes...</p>
-            ) : requests.length === 0 ? (
-                <div className="cjr-empty">
-                    <h3>No hay solicitudes pendientes</h3>
-                    <p>
-                        Cuando un estudiante ingrese el código
-                        de esta clase y necesite aprobación,
-                        su solicitud aparecerá aquí.
+                {success && (
+                    <p className="cjr-alert cjr-success" role="status">
+                        <CheckCircle2 size={17} aria-hidden="true" />
+                        {success}
                     </p>
-                </div>
-            ) : (
-                <div className="cjr-list">
-                    {requests.map((request) => (
-                        <article
-                            key={request.id}
-                            className="cjr-request"
-                        >
-                            <div className="cjr-student">
-                                <strong>
-                                    {request.firstName}{' '}
-                                    {request.lastName}
-                                </strong>
+                )}
 
-                                <small>
-                                    Solicitó ingresar el{' '}
-                                    {new Date(
-                                        request.requestedAt
-                                    ).toLocaleDateString('es-GT')}
-                                </small>
+                {loading ? (
+                    <div className="cjr-empty" role="status">
+                        <span className="cjr-empty-icon" aria-hidden="true">
+                            <Clock3 size={24} />
+                        </span>
+                        <h3>Cargando solicitudes...</h3>
+                    </div>
+                ) : requests.length === 0 ? (
+                    <div className="cjr-empty">
+                        <span className="cjr-empty-icon" aria-hidden="true">
+                            <Inbox size={26} strokeWidth={1.7} />
+                        </span>
+                        <h3>Sin solicitudes</h3>
+                        <p>
+                            No hay solicitudes pendientes. Cuando un alumno solicite
+                            ingresar a esta clase, aparecerá aquí.
+                        </p>
+                    </div>
+                ) : (
+                    <div className="cjr-list">
+                        {requests.map((request) => (
+                            <article className="cjr-request" key={request.id}>
+                                <div className="cjr-student">
+                                    <span className="cjr-student-avatar" aria-hidden="true">
+                                        <UserRound size={19} />
+                                    </span>
+                                    <div className="cjr-student-info">
+                                        <strong>
+                                            {request.firstName} {request.lastName}
+                                        </strong>
+                                        <small>
+                                            <CalendarDays size={14} aria-hidden="true" />
+                                            Solicitó ingresar el{' '}
+                                            {new Date(
+                                                request.requestedAt
+                                            ).toLocaleDateString('es-GT')}
+                                        </small>
+                                        <span className="cjr-pending">
+                                            <Clock3 size={13} aria-hidden="true" />
+                                            Pendiente
+                                        </span>
+                                    </div>
+                                </div>
 
-                                <span className="cjr-pending">
-                                    Pendiente
-                                </span>
-                            </div>
-
-                            <div className="cjr-actions">
-                                <button
-                                    type="button"
-                                    className="cjr-approve"
-                                    disabled={processingId !== null}
-                                    onClick={() =>
-                                        handleReview(
-                                            request.id,
-                                            'approved'
-                                        )
-                                    }
-                                >
-                                    {processingId === request.id
-                                        ? 'Procesando...'
-                                        : 'Aprobar'}
-                                </button>
-
-                                <button
-                                    type="button"
-                                    className="cjr-reject"
-                                    disabled={processingId !== null}
-                                    onClick={() =>
-                                        handleReview(
-                                            request.id,
-                                            'rejected'
-                                        )
-                                    }
-                                >
-                                    Rechazar
-                                </button>
-                            </div>
-                        </article>
-                    ))}
-                </div>
-            )}
+                                <div className="cjr-actions">
+                                    <button
+                                        type="button"
+                                        className="cjr-approve"
+                                        disabled={processingId !== null}
+                                        onClick={() =>
+                                            handleReview(request.id, 'approved')
+                                        }
+                                    >
+                                        <Check size={16} aria-hidden="true" />
+                                        {processingId === request.id
+                                            ? 'Procesando...'
+                                            : 'Aprobar'}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="cjr-reject"
+                                        disabled={processingId !== null}
+                                        onClick={() =>
+                                            handleReview(request.id, 'rejected')
+                                        }
+                                    >
+                                        <X size={16} aria-hidden="true" />
+                                        Rechazar
+                                    </button>
+                                </div>
+                            </article>
+                        ))}
+                    </div>
+                )}
+            </section>
         </div>
     );
 }

@@ -10,6 +10,7 @@ import ClassView from './Views/Classes/ClassView';
 import HomeView from './Views/Home/HomeView';
 import RightPanel from './RightPanel/RightPanel';
 import StudentClassView from './Views/Classes/StudentClassView';
+import ClassroomWorkspace from './Views/Classes/ClassroomWorkspace/ClassroomWorkspace';
 
 
 export default function Dashboard({ firebaseUser }) {
@@ -23,6 +24,7 @@ export default function Dashboard({ firebaseUser }) {
     const handleCloseMobileMenu = () => setIsMobileMenuOpen(false);
 
     const [activeView, setActiveView] = useState('inicio');  // Estado para controlar vista (por defecto "inicio")
+    const [selectedClassroom, setSelectedClassroom] = useState(null); // Guarda clase seleccionada
 
 
     // URL dinámica, nube y local
@@ -88,7 +90,11 @@ export default function Dashboard({ firebaseUser }) {
     }, [firebaseUser, API_URL]);
 
 
-
+    // función para cambiar de sección principal
+    const handleNavigate = (view) => {
+        setSelectedClassroom(null);
+        setActiveView(view);
+    };
 
     // función para cerrar sesión
     const handleLogout = async () => {
@@ -106,21 +112,47 @@ export default function Dashboard({ firebaseUser }) {
             case 'inicio':
                 return <HomeView userProfile={userProfile} />;
 
+
             case 'clases':
-                if (userProfile?.rol === 'alumno') {
+                // Cuando existe una clase seleccionada,
+                // mostrar su espacio de trabajo a pantalla completa.
+                if (selectedClassroom) {
                     return (
-                        <StudentClassView
+                        <ClassroomWorkspace
+                            classroom={selectedClassroom}
                             firebaseUser={firebaseUser}
+                            userProfile={userProfile}
+                            onBack={() => setSelectedClassroom(null)}
                         />
                     );
                 }
 
+                // Vista específica del alumno.
+                if (
+                    userProfile?.rol === 'alumno' ||
+                    userProfile?.roleCode === 'STUDENT'
+                ) {
+                    return (
+                        <StudentClassView
+                            firebaseUser={firebaseUser}
+                            onOpenClass={(cls) =>
+                                setSelectedClassroom(cls)
+                            }
+                        />
+                    );
+                }
+
+                // Vista actual del docente/director.
                 return (
                     <ClassView
                         userProfile={userProfile}
                         firebaseUser={firebaseUser}
+                        onOpenClass={(cls) =>
+                            setSelectedClassroom(cls)
+                        }
                     />
                 );
+
 
             case 'calendario':
             case 'mensajes':
@@ -152,7 +184,7 @@ export default function Dashboard({ firebaseUser }) {
                 onCloseMobile={handleCloseMobileMenu}
 
                 activeView={activeView}
-                onNavigate={setActiveView}
+                onNavigate={handleNavigate}
             />
 
             {/* Panel derecho publicaciones */}
@@ -171,12 +203,14 @@ export default function Dashboard({ firebaseUser }) {
                 <div className="dashboard-body">
 
                     {/* Área de contenido dinámico (Izquierda) */}
-                    <section className="dashboard-content">
+                    <section className={ activeView === 'clases' && selectedClassroom ? 'dashboard-content dashboard-content--workspace' : 'dashboard-content' } >
                         {renderContent()}
                     </section>
 
                     {/* Panel Derecho */}
-                    <RightPanel activeView={activeView} />
+                    {!(activeView === 'clases' && selectedClassroom) && (
+                        <RightPanel activeView={activeView} />
+                    )}
 
                 </div>
 
