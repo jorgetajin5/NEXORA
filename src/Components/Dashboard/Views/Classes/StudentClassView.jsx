@@ -266,15 +266,15 @@ export default function StudentClassView({ firebaseUser, onOpenClass }) {
                         {requests.map((request) => (
                             <article
                                 className="scv-class-card"
-                                key={cls.id}
-                                onClick={() => onOpenClass?.(cls)}
+                                key={request.id}
+                                onClick={() => onOpenClass?.(request)}
                                 onKeyDown={(event) => {
                                     if (
                                         event.target === event.currentTarget &&
                                         (event.key === 'Enter' || event.key === ' ')
                                     ) {
                                         event.preventDefault();
-                                        onOpenClass?.(cls);
+                                        onOpenClass?.(request);
                                     }
                                 }}
                                 tabIndex={0}
