@@ -8,7 +8,8 @@ export default function ClassDetail({
     classroomId,
     firebaseUser,
     onBack,
-    onSettingsUpdated
+    onSettingsUpdated,
+    onManageStudents
 }) {
     const [classroom, setClassroom] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -309,6 +310,15 @@ export default function ClassDetail({
                                     : 'Docente'}
                             </strong>
                         </div>
+
+                        <button
+                            type="button"
+                            className="class-detail-save"
+                            onClick={onManageStudents}
+                            style={{ marginTop: '1.5rem' }}
+                        >
+                            Gestionar estudiantes
+                        </button>
                     </div>
                 </>
             )}

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './ClassView.css';
 import ClassDetail from './ClassDetail';
 import { createPortal } from 'react-dom';
+import ClassStudents from './ClassStudents';
 
 export default function ClassView({ userProfile, firebaseUser }) {
     // asignamos un rol por defecto si aún no carga
@@ -17,6 +18,9 @@ export default function ClassView({ userProfile, firebaseUser }) {
     const [classes, setClasses] = useState([]);
     const [loadingClasses, setLoadingClasses] = useState(true);
     const [classesError, setClassesError] = useState('');
+
+    // Detalles clase
+    const [modalSection, setModalSection] = useState('details');
 
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
@@ -330,7 +334,7 @@ export default function ClassView({ userProfile, firebaseUser }) {
                             </div>
 
                             <div className="cv-card-footer">
-                                <button type="button" className="cv-btn-view" onClick={() => setSelectedClassId(cls.id)} >
+                                <button type="button" className="cv-btn-view" onClick={() => { setSelectedClassId(cls.id); setModalSection('details'); }} >
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="16" height="16">
                                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                                         <circle cx="12" cy="12" r="3"></circle>
@@ -610,23 +614,40 @@ export default function ClassView({ userProfile, firebaseUser }) {
                             &times;
                         </button>
 
-                        <ClassDetail
-                            classroomId={selectedClassId}
-                            firebaseUser={firebaseUser}
-                            onBack={() => setSelectedClassId(null)}
-                            onSettingsUpdated={(settings) => {
-                                setClasses((previous) =>
-                                    previous.map((cls) =>
-                                        cls.id === settings.id
-                                            ? {
-                                                ...cls,
-                                                joinMode: settings.joinMode
-                                            }
-                                            : cls
-                                    )
-                                );
-                            }}
-                        />
+
+                        {modalSection === 'details' ? (
+                            <ClassDetail
+                                classroomId={selectedClassId}
+                                firebaseUser={firebaseUser}
+                                onBack={() => setSelectedClassId(null)}
+                                onManageStudents={() => setModalSection('students')}
+                                onSettingsUpdated={(settings) => {
+                                    setClasses((previous) =>
+                                        previous.map((cls) =>
+                                            cls.id === settings.id
+                                                ? { ...cls, joinMode: settings.joinMode }
+                                                : cls
+                                        )
+                                    );
+                                }}
+                            />
+                        ) : (
+                            <ClassStudents
+                                classroomId={selectedClassId}
+                                firebaseUser={firebaseUser}
+                                onBack={() => setModalSection('details')}
+                                onStudentsChanged={(count) => {
+                                    setClasses((previous) =>
+                                        previous.map((cls) =>
+                                            cls.id === selectedClassId
+                                                ? { ...cls, students: count }
+                                                : cls
+                                        )
+                                    );
+                                }}
+                            />
+                        )}
+
                     </div>
                 </div>,
                 document.body

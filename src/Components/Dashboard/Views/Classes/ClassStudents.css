@@ -1,0 +1,174 @@
+
+.class-students {
+    width: 100%;
+    color: #334155;
+}
+
+.cs-back {
+    border: none;
+    background: transparent;
+    color: #b7791f;
+    font-weight: 700;
+    cursor: pointer;
+    margin-bottom: 1rem;
+}
+
+.cs-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.cs-header h2 {
+    margin: 0 0 0.4rem;
+    color: #172033;
+}
+
+.cs-header p,
+.cs-section p {
+    color: #64748b;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.cs-header > strong {
+    white-space: nowrap;
+    background: #fef3c7;
+    color: #92400e;
+    padding: 0.5rem 0.8rem;
+    border-radius: 30px;
+}
+
+.cs-section {
+    border: 1px solid #e2e8f0;
+    background: white;
+    border-radius: 14px;
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+}
+
+.cs-section h3 {
+    margin: 0 0 0.7rem;
+    color: #172033;
+}
+
+.cs-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+.cs-fields label,
+.cs-code-label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.cs-fields input,
+.cs-code-label input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.8rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    font: inherit;
+}
+
+.cs-section button[type="submit"],
+.cs-section button[type="button"] {
+    border: none;
+    border-radius: 9px;
+    padding: 0.75rem 1rem;
+    background: #d97706;
+    color: white;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.cs-section button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.cs-results {
+    margin-top: 1.5rem;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 1rem;
+}
+
+.cs-result {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    border-bottom: 1px solid #f1f5f9;
+    padding: 0.9rem 0;
+}
+
+.cs-result > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.cs-result small {
+    color: #64748b;
+}
+
+.cs-new-student {
+    margin-top: 1.3rem;
+    padding: 1.25rem;
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 12px;
+}
+
+.cs-code-label {
+    margin: 1rem 0;
+}
+
+.cs-confirm {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    font-size: 0.85rem;
+}
+
+.cs-active {
+    color: #15803d;
+    background: #dcfce7;
+    border-radius: 20px;
+    padding: 0.4rem 0.7rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.cs-error {
+    color: #b91c1c;
+}
+
+.cs-success {
+    color: #15803d;
+}
+
+@media (max-width: 600px) {
+    .cs-fields {
+        grid-template-columns: 1fr;
+    }
+
+    .cs-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .cs-section {
+        padding: 1rem;
+    }
+}
