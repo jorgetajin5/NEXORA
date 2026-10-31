@@ -105,7 +105,13 @@ export default function Dashboard({ firebaseUser }) {
             case 'inicio':
                 return <HomeView userProfile={userProfile} />;
             case 'clases':
-                return <ClassView pageId="clases" />;
+                return (
+                    <ClassView
+                        pageId="clases"
+                        userProfile={userProfile}
+                        firebaseUser={firebaseUser}
+                    />
+                );
             case 'calendario':
             case 'mensajes':
                 return <UnderConstruction pageId={activeView} />;
