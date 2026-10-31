@@ -7,7 +7,7 @@ import ClassDetail from '../ClassDetail';
 
 import './ClassroomWorkspace.css';
 
-import { Image, CalendarDays, Paperclip, ChartNoAxesColumn, ThumbsUp, MessageCircle, Share2, Ellipsis, BookOpen, ArrowLeft } from 'lucide-react';
+import { Image, CalendarDays, Paperclip, ChartNoAxesColumn, ThumbsUp, MessageCircle, Share2, Ellipsis, BookOpen, ArrowLeft, Trash2 } from 'lucide-react';
 
 const API_URL =
     import.meta.env.VITE_API_URL ||
@@ -77,6 +77,9 @@ export default function ClassroomWorkspace({
 
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+
+    const [openPostMenuId, setOpenPostMenuId] = useState(null);
+    const [deletingPostId, setDeletingPostId] = useState(null);
 
     const [studentsCount, setStudentsCount] = useState(
         Number(classroom.students ?? 0)
@@ -167,6 +170,29 @@ export default function ClassroomWorkspace({
         };
     }, [classroomId, firebaseUser]);
 
+
+    useEffect(() => {
+        const closeMenu = (event) => {
+            if (!event.target.closest('.cw-post-menu-wrap')) {
+                setOpenPostMenuId(null);
+            }
+        };
+
+        const closeOnEscape = (event) => {
+            if (event.key === 'Escape') {
+                setOpenPostMenuId(null);
+            }
+        };
+
+        document.addEventListener('pointerdown', closeMenu);
+        document.addEventListener('keydown', closeOnEscape);
+
+        return () => {
+            document.removeEventListener('pointerdown', closeMenu);
+            document.removeEventListener('keydown', closeOnEscape);
+        };
+    }, []);
+
     // Crear publicación de texto
     const handlePublish = async (event) => {
         event.preventDefault();
@@ -208,6 +234,46 @@ export default function ClassroomWorkspace({
             setPublishing(false);
         }
     };
+
+
+    // Eliminacion de publicacion
+    const handleDeletePost = async (post) => {
+        if (!post.canDelete || deletingPostId !== null) return;
+
+        const confirmed = window.confirm(
+            '¿Estás seguro de que deseas eliminar esta publicación?'
+        );
+
+        if (!confirmed) return;
+
+        setDeletingPostId(post.id);
+        setOpenPostMenuId(null);
+        setError('');
+        setSuccess('');
+
+        try {
+            await apiRequest(
+                `/api/classrooms/${classroomId}/posts/${post.id}`,
+                {
+                    method: 'DELETE'
+                }
+            );
+
+            // Quitar la publicación del feed actual
+            // sin recargar la página.
+            setPosts((previous) =>
+                previous.filter((item) => item.id !== post.id)
+            );
+
+            //setSuccess('Publicación eliminada correctamente.');
+
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setDeletingPostId(null);
+        }
+    };
+
 
     // Actualizar contador después de aprobar solicitudes
     const refreshStudentsCount = async () => {
@@ -493,13 +559,48 @@ export default function ClassroomWorkspace({
                                                 Anuncio
                                             </span>
 
-                                            <button
-                                                type="button"
-                                                className="cw-post-menu"
-                                                title="Más opciones"
-                                            >
-                                                <Ellipsis size={20} strokeWidth={2.5} />
-                                            </button>
+
+                                            {post.canDelete && (
+                                                <div className="cw-post-menu-wrap">
+                                                    <button
+                                                        type="button"
+                                                        className="cw-post-menu"
+                                                        aria-label="Opciones de publicación"
+                                                        aria-expanded={openPostMenuId === post.id}
+                                                        onClick={() =>
+                                                            setOpenPostMenuId((current) =>
+                                                                current === post.id ? null : post.id
+                                                            )
+                                                        }
+                                                    >
+                                                        <Ellipsis size={20} />
+                                                    </button>
+
+                                                    {openPostMenuId === post.id && (
+                                                        <div className="cw-post-dropdown">
+                                                            <button
+                                                                type="button"
+                                                                className="cw-post-delete"
+                                                                disabled={deletingPostId !== null}
+                                                                onClick={() => handleDeletePost(post)}
+                                                            >
+                                                                <Trash2
+                                                                    size={16}
+                                                                    strokeWidth={2}
+                                                                    aria-hidden="true"
+                                                                />
+
+                                                                <span>
+                                                                    {deletingPostId === post.id
+                                                                        ? 'Eliminando...'
+                                                                        : 'Eliminar publicación'}
+                                                                </span>
+                                                            </button>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            )}
+
                                         </div>
                                     </div>
 
@@ -636,19 +737,23 @@ export default function ClassroomWorkspace({
                 </div>
             )}
 
+
+
             {/* Gestión de estudiantes del docente */}
             {activeTab === 'estudiantes' && isStaff && (
-                <div className="cw-tab-content">
-                    <ClassDetail
+                <div className="cw-tab-content cw-tab-content--students">
+                    <ClassStudents
                         embedded
                         classroomId={classroomId}
                         firebaseUser={firebaseUser}
                         onBack={() => setActiveTab('publicaciones')}
-                        onManageStudents={() => setActiveTab('estudiantes')}
-                        onManageRequests={() => setActiveTab('solicitudes')}
+                        onStudentsChanged={(count) => {
+                            setStudentsCount(count);
+                        }}
                     />
                 </div>
             )}
+
 
             {/* Solicitudes del docente */}
             {activeTab === 'solicitudes' && isStaff && (

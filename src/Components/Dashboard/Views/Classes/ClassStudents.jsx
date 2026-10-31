@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from 'react';
-import { Search, UsersRound, UserRoundPlus, UserRound, BadgeCheck, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Search, UsersRound, UserRoundPlus, UserRound, BadgeCheck, CheckCircle2, AlertCircle, UserMinus } from 'lucide-react';
 import './ClassStudents.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
@@ -86,6 +86,54 @@ export default function ClassStudents({
         setStudents(data.students);
         onStudentsChanged?.(data.students.length);
     };
+
+
+    const handleRemoveStudent = async (student) => {
+        if (busy) return;
+
+        const fullName =
+            `${student.firstName} ${student.lastName}`.trim();
+
+        const confirmed = window.confirm(
+            `¿Retirar a ${fullName} de esta clase?\n\n` +
+            'El estudiante perderá el acceso a esta clase, ' +
+            'pero podrá volver a inscribirse posteriormente ' +
+            'según la configuración de ingreso.\n\n' +
+            'Su expediente académico y su historial se conservarán.'
+        );
+
+        if (!confirmed) return;
+
+        setBusy(true);
+        setError('');
+        setSuccess('');
+
+        try {
+            await apiRequest(
+                `/api/classrooms/${classroomId}/students/${student.id}/remove`,
+                {
+                    method: 'PATCH'
+                }
+            );
+
+            // Consultar nuevamente la lista real y
+            // actualizar el contador de la clase.
+            await refreshStudents();
+
+            // setSuccess(
+            //     `${fullName} fue retirado de la clase correctamente.`
+            // );
+
+            // Descartar resultados de búsqueda anteriores.
+            setMatches(null);
+
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setBusy(false);
+        }
+    };
+
 
     // Buscar posibles expedientes duplicados
     const handleSearch = async (event) => {
@@ -402,9 +450,32 @@ export default function ClassStudents({
                                         </small>
                                     </div>
                                 </div>
-                                <span className="cs-active">
-                                    <BadgeCheck size={14} aria-hidden="true" /> Activo
-                                </span>
+
+                                <div className="cs-enrolled-actions">
+                                    <span className="cs-active">
+                                        <BadgeCheck size={14} aria-hidden="true" />
+                                        Activo
+                                    </span>
+
+                                    <button
+                                        type="button"
+                                        className="cs-remove-button"
+                                        disabled={busy}
+                                        onClick={() => handleRemoveStudent(student)}
+                                        aria-label={
+                                            `Retirar a ${student.firstName} ${student.lastName} de la clase`
+                                        }
+                                        title="Retirar de esta clase"
+                                    >
+                                        <UserMinus
+                                            size={16}
+                                            strokeWidth={2}
+                                            aria-hidden="true"
+                                        />
+                                        <span>Retirar</span>
+                                    </button>
+                                </div>
+
                             </div>
                         ))}
                     </div>

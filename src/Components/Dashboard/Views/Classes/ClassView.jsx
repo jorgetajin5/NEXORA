@@ -4,6 +4,7 @@ import ClassDetail from './ClassDetail';
 import { createPortal } from 'react-dom';
 import ClassStudents from './ClassStudents';
 import ClassJoinRequests from './ClassJoinRequests';
+import { BookOpen, Plus, Search, UsersRound, Eye, Ellipsis, ClipboardCheck } from 'lucide-react';
 
 
 export default function ClassView({ userProfile, firebaseUser, onOpenClass }) {
@@ -20,6 +21,7 @@ export default function ClassView({ userProfile, firebaseUser, onOpenClass }) {
     const [classes, setClasses] = useState([]);
     const [loadingClasses, setLoadingClasses] = useState(true);
     const [classesError, setClassesError] = useState('');
+    const [searchTerm, setSearchTerm] = useState('');
 
     // Detalles clase
     const [modalSection, setModalSection] = useState('details');
@@ -168,6 +170,13 @@ export default function ClassView({ userProfile, firebaseUser, onOpenClass }) {
         }
     };
 
+    const filteredClasses = classes.filter((cls) => {
+        const query = searchTerm.trim().toLocaleLowerCase('es');
+        if (!query) return true;
+        return [cls.title, cls.category, cls.code]
+            .some((value) => String(value || '').toLocaleLowerCase('es').includes(query));
+    });
+
     return (
         <div className="cv-container">
             {/* Cabecera */}
@@ -182,24 +191,26 @@ export default function ClassView({ userProfile, firebaseUser, onOpenClass }) {
                 <p className="cv-subtitle">Gestiona tu entorno de aprendizaje y materiales.</p>
             </div> */}
 
-            {/* Renderizado específico para Docentes */}
+            {/* Acceso compacto al formulario existente de creación */}
             {role === 'docente' && (
-                <div className="cv-banner-create">
-                    <div className="cv-banner-illustration">
-                        <img src="/escritorio.png" alt="Escritorio" className="hv-illustration-img" />
+                <section className="cv-banner-create">
+                    <div className="cv-banner-illustration" aria-hidden="true">
+                        <BookOpen size={25} strokeWidth={1.9} />
                     </div>
                     <div className="cv-banner-content">
                         <h3>Crea una nueva clase</h3>
-                        <p>Organiza tus contenidos, invita a tus estudiantes y comienza a compartir el conocimiento.</p>
-                        <button className="cv-btn-create" onClick={() => setCreateModalOpen(true)}>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
-                                <line x1="12" y1="5" x2="12" y2="19" />
-                                <line x1="5" y1="12" x2="19" y2="12" />
-                            </svg>
-                            {creatingClass ? 'Creando clase...' : 'Crear clase'}
-                        </button>
+                        <p>Organiza tus contenidos y comparte con tus estudiantes.</p>
                     </div>
-                </div>
+                    <button
+                        type="button"
+                        className="cv-btn-create"
+                        onClick={() => setCreateModalOpen(true)}
+                        disabled={creatingClass}
+                    >
+                        <Plus size={17} strokeWidth={2.2} aria-hidden="true" />
+                        {creatingClass ? 'Creando clase...' : 'Crear clase'}
+                    </button>
+                </section>
             )}
 
             {/* Renderizado específico para Alumnos */}
@@ -225,34 +236,24 @@ export default function ClassView({ userProfile, firebaseUser, onOpenClass }) {
 
 
 
-            {/* Controles de Lista de Clases */}
+            {/* Encabezado y búsqueda: sin controles decorativos inactivos */}
             <div className="cv-list-header">
                 <div className="cv-list-title-group">
                     <h3>Mis clases</h3>
                     <span className="cv-badge-count">{classes.length}</span>
-                    <p>Aquí encontrarás todas las clases que has creado.</p>
+                    <p>Accede a tus aulas y gestiona sus estudiantes.</p>
                 </div>
                 <div className="cv-list-actions">
-                    <div className="cv-search-box">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                        </svg>
-                        <input type="text" placeholder="Buscar clases..." />
-                    </div>
-                    <button className="cv-btn-filter">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="18" height="18">
-                            <line x1="4" y1="21" x2="4" y2="14"></line>
-                            <line x1="4" y1="10" x2="4" y2="3"></line>
-                            <line x1="12" y1="21" x2="12" y2="12"></line>
-                            <line x1="12" y1="8" x2="12" y2="3"></line>
-                            <line x1="20" y1="21" x2="20" y2="16"></line>
-                            <line x1="20" y1="12" x2="20" y2="3"></line>
-                            <line x1="1" y1="14" x2="7" y2="14"></line>
-                            <line x1="9" y1="8" x2="15" y2="8"></line>
-                            <line x1="17" y1="16" x2="23" y2="16"></line>
-                        </svg>
-                    </button>
+                    <label className="cv-search-box">
+                        <Search size={17} aria-hidden="true" />
+                        <input
+                            type="search"
+                            placeholder="Buscar clases..."
+                            aria-label="Buscar clases"
+                            value={searchTerm}
+                            onChange={(event) => setSearchTerm(event.target.value)}
+                        />
+                    </label>
                 </div>
             </div>
 
@@ -267,8 +268,8 @@ export default function ClassView({ userProfile, firebaseUser, onOpenClass }) {
             ) : classes.length > 0 ? (
                 <div className="cv-classes-grid">
 
-                    {classes.map((cls) => (
-                        <div
+                    {filteredClasses.map((cls) => (
+                        <article
                             className="cv-class-card"
                             key={cls.id}
                             onClick={() => onOpenClass?.(cls)}
@@ -284,85 +285,14 @@ export default function ClassView({ userProfile, firebaseUser, onOpenClass }) {
                             tabIndex={0}
                             aria-label={`Entrar a la clase ${cls.title}`}
                         >
-
                             <div className="cv-card-header">
-                                <span
-                                    className="cv-tag"
-                                    style={{
-                                        backgroundColor: '#f0f9ff',
-                                        color: '#0284c7'
-                                    }}
-                                >
-                                    {cls.category}
+                                <span className="cv-tag">
+                                    <BookOpen size={14} aria-hidden="true" />
+                                    {cls.category || 'Clase'}
                                 </span>
-                                <button className="cv-btn-options">⋮</button>
-                            </div>
-
-                            <div
-                                className="cv-card-illustration"
-                                style={{
-                                    backgroundColor: '#f0f9ff',
-                                    overflow: 'hidden',
-                                    padding: '1.5rem'
-                                }}
-                            >
-                                <img
-                                    src={'/class.png'}
-                                    alt={`Portada de ${cls.title}`}
-                                    style={{
-                                        width: '100%',
-                                        height: '100%',
-                                        objectFit: 'contain',
-                                        objectPosition: 'center'
-                                    }}
-                                />
-                            </div>
-
-                            <div className="cv-card-info">
-                                <h4>{cls.title}</h4>
-                                <span className="cv-code">Código: {cls.code}</span>
-                            </div>
-
-                            <div className="cv-card-stats">
-                                <div className="cv-stat">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                        <circle cx="9" cy="7" r="4"></circle>
-                                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                                    </svg>
-                                    <div>
-                                        <strong>{cls.students}</strong>
-                                        <span>Estudiantes</span>
-                                    </div>
-                                </div>
-                                <div className="cv-stat">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                        <line x1="16" y1="2" x2="16" y2="6"></line>
-                                        <line x1="8" y1="2" x2="8" y2="6"></line>
-                                        <line x1="3" y1="10" x2="21" y2="10"></line>
-                                    </svg>
-                                    <div>
-                                        <strong>
-                                            {cls.joinMode === 'automatic' ? 'Rápido' : 'Aprobación'}
-                                        </strong>
-                                        <span>Modo de ingreso</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="cv-card-footer">
-                                <button type="button" className="cv-btn-view" onClick={(event) => { event.stopPropagation(); onOpenClass?.(cls); }} >
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="16" height="16">
-                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                        <circle cx="12" cy="12" r="3"></circle>
-                                    </svg>
-                                    Entrar a clase
-                                </button>
                                 <button
                                     type="button"
-                                    className="cv-btn-more"
+                                    className="cv-btn-options"
                                     title="Ver detalles de la clase"
                                     aria-label={`Ver detalles de ${cls.title}`}
                                     onClick={(event) => {
@@ -371,11 +301,46 @@ export default function ClassView({ userProfile, firebaseUser, onOpenClass }) {
                                         setModalSection('details');
                                     }}
                                 >
-                                    •••
+                                    <Ellipsis size={19} aria-hidden="true" />
                                 </button>
                             </div>
-                        </div>
+
+                            <div className="cv-card-info">
+                                <h4 title={cls.title}>{cls.title}</h4>
+                                <span className="cv-code">Código: {cls.code || 'Sin código'}</span>
+                            </div>
+
+                            <div className="cv-card-stats">
+                                <span className="cv-stat-inline">
+                                    <UsersRound size={16} aria-hidden="true" />
+                                    <strong>{cls.students ?? 0}</strong> estudiantes
+                                </span>
+                                <span className="cv-stat-inline">
+                                    <ClipboardCheck size={16} aria-hidden="true" />
+                                    {cls.joinMode === 'automatic' ? 'Ingreso rápido' : 'Con aprobación'}
+                                </span>
+                            </div>
+
+                            <div className="cv-card-footer">
+                                <button
+                                    type="button"
+                                    className="cv-btn-view"
+                                    onClick={(event) => {
+                                        event.stopPropagation();
+                                        onOpenClass?.(cls);
+                                    }}
+                                >
+                                    <Eye size={16} aria-hidden="true" />
+                                    Entrar a clase
+                                </button>
+                            </div>
+                        </article>
                     ))}
+                    {filteredClasses.length === 0 && (
+                        <p className="cv-no-results">
+                            No se encontraron clases con “{searchTerm}”.
+                        </p>
+                    )}
                 </div>
             ) : (
                 <div style={{

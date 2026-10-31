@@ -773,3 +773,98 @@
     border-radius: 0;
     box-shadow: none;
 }
+
+
+/* ==========================================
+   MENÚ DE OPCIONES DE PUBLICACIÓN
+   ========================================== */
+
+.cw-post-header-right {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.cw-post-menu-wrap {
+    position: relative;
+}
+
+.cw-post-menu {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 32px;
+    height: 32px;
+
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+
+    color: #64748b;
+    cursor: pointer;
+}
+
+.cw-post-menu:hover,
+.cw-post-menu[aria-expanded="true"] {
+    background: #f1f4f8;
+    color: #243247;
+}
+
+/* Menú desplegable */
+
+.cw-post-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    z-index: 30;
+
+    min-width: 190px;
+    padding: 6px;
+
+    background: #ffffff;
+    border: 1px solid #e8ebf0;
+    border-radius: 12px;
+
+    box-shadow:
+        0 8px 25px rgba(15, 23, 42, 0.12);
+}
+
+/* Opción de eliminar */
+
+.cw-post-delete {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    width: 100%;
+    padding: 11px 12px;
+
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+
+    color: #b42318;
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 650;
+    text-align: left;
+
+    cursor: pointer;
+}
+
+.cw-post-delete:hover:not(:disabled) {
+    background: #fff1f0;
+}
+
+.cw-post-delete:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.cw-post-menu:focus-visible,
+.cw-post-delete:focus-visible {
+    outline: 2px solid #d49a00;
+    outline-offset: 2px;
+}

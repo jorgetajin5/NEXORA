@@ -1,396 +1,401 @@
+/* ================================================
+   AULA CONECTA · TUS CLASES
+   Compatible con ClassView_compact.jsx
+   Separación exterior y entre componentes: 15px
+   Interior de tarjetas: 20px (más legibilidad)
+   ================================================ */
+
 .cv-container {
-    font-family: system-ui, -apple-system, sans-serif;
+    --cv-gap: 20px;
+    --cv-text: #1d293d;
+    --cv-muted: #7e8ca2;
+    --cv-line: #eae7e0;
+    --cv-accent: #b38934;
+
+    box-sizing: border-box;
     width: 100%;
+    min-width: 0;
+    padding: var(--cv-gap);
+    color: var(--cv-text);
+    font-family: inherit;
 }
 
-/* --- CABECERA --- */
-.cv-header-section {
-    margin-bottom: 2rem;
+/* Dashboard.css agrega padding al área de contenido.
+   Solo cuando se renderiza Tus clases, lo retiramos para
+   que los 15px de .cv-container sean el margen exterior real.
+   No afecta Inicio, Publicaciones ni las otras vistas. */
+.dashboard-content:has(> .cv-container) {
+    padding: 0;
 }
 
-.cv-title {
-    font-size: 1.5rem;
-    color: #1e293b;
-    margin-bottom: 0.25rem;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: 800;
-}
-
-.cv-title-icon {
-    width: 24px;
-    height: 24px;
-    color: #B08836;
-}
-
-.cv-subtitle {
-    color: #64748b;
-    font-size: 0.95rem;
-    margin: 0;
-}
-
-/* --- BANNER CREAR CLASE --- */
+/* Banner de creación: horizontal, sin imagen grande */
 .cv-banner-create {
-    background-color: #fffbeb;
-    border-radius: 20px;
-    padding: 2rem 3rem;
     display: flex;
     align-items: center;
-    gap: 3rem;
-    margin-bottom: 2.5rem;
-    border: 1px solid #fde68a;
+    gap: 18px;
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    min-height: 106px;
+    margin: 0 0 var(--cv-gap);
+    padding: 20px 24px;
+    background: #fffbf1;
+    border: 1px solid #f0dfa9;
+    border-radius: 19px;
 }
 
 .cv-banner-illustration {
-    font-size: 5rem;
-    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 50px;
+    width: 50px;
+    height: 50px;
+    border-radius: 14px;
+    background: #fff0ce;
+    color: #b98513;
+}
+
+.cv-banner-content {
+    flex: 1 1 auto;
+    min-width: 0;
 }
 
 .cv-banner-content h3 {
-    font-size: 1.25rem;
-    color: #1e293b;
-    margin: 0 0 0.5rem 0;
+    margin: 0 0 7px;
+    color: #172033;
+    font-size: 17px;
     font-weight: 800;
+    line-height: 1.3;
 }
 
 .cv-banner-content p {
-    color: #64748b;
-    font-size: 0.95rem;
-    margin: 0 0 1.25rem 0;
+    margin: 0;
+    color: var(--cv-muted);
+    font-size: 13px;
+    line-height: 1.55;
 }
 
 .cv-btn-create {
-    background-color: #B08836;
-    color: white;
-    border: none;
-    padding: 0.7rem 1.5rem;
-    border-radius: 30px;
-    font-size: 0.95rem;
-    font-weight: bold;
-    cursor: pointer;
-    display: flex;
+    display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
-    transition: background-color 0.2s;
+    flex: 0 0 auto;
+    min-height: 42px;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 11px;
+    background: var(--cv-accent);
+    color: #fff;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 750;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background .18s ease, transform .18s ease;
 }
 
-.cv-btn-create:hover {
-    background-color: #785c24;
+.cv-btn-create:hover:not(:disabled) {
+    background: #977126;
+    transform: translateY(-1px);
 }
 
-/* --- CABECERA LISTA --- */
+.cv-btn-create:disabled {
+    cursor: not-allowed;
+    opacity: .6;
+}
+
+/* Título del listado y buscador */
 .cv-list-header {
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 1.5rem;
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: 15px;
+    margin: 0 0 var(--cv-gap);
+    padding: 5px 0;
 }
 
+.cv-list-title-group { min-width: 0; }
+
 .cv-list-title-group h3 {
-    font-size: 1.25rem;
-    color: #1e293b;
+    display: inline;
     margin: 0;
-    display: inline-block;
+    color: #172033;
+    font-size: 20px;
     font-weight: 800;
+    line-height: 1.3;
 }
 
 .cv-badge-count {
-    background-color: #f1f5f9;
-    color: #475569;
-    font-size: 0.8rem;
-    font-weight: bold;
-    padding: 0.2rem 0.6rem;
-    border-radius: 20px;
-    margin-left: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    min-height: 24px;
+    box-sizing: border-box;
+    margin-left: 9px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: #eef1f5;
+    color: #50647e;
+    font-size: 12px;
+    font-weight: 750;
     vertical-align: middle;
 }
 
 .cv-list-title-group p {
-    color: #94a3b8;
-    font-size: 0.9rem;
-    margin: 0.25rem 0 0 0;
+    margin: 5px 0 0;
+    color: var(--cv-muted);
+    font-size: 12.5px;
+    line-height: 1.5;
 }
 
 .cv-list-actions {
     display: flex;
-    gap: 1rem;
     align-items: center;
+    gap: 10px;
+    min-width: 0;
 }
 
 .cv-search-box {
-    position: relative;
     display: flex;
     align-items: center;
+    position: relative;
+    min-width: 0;
 }
 
-.cv-search-box svg {
+.cv-search-box > svg {
     position: absolute;
-    left: 1rem;
-    width: 16px;
-    height: 16px;
-    color: #94a3b8;
+    left: 14px;
+    color: #91a0b5;
+    pointer-events: none;
 }
 
 .cv-search-box input {
-    padding: 0.6rem 1rem 0.6rem 2.5rem;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
+    width: 260px;
+    max-width: 100%;
+    height: 42px;
+    box-sizing: border-box;
+    padding: 9px 14px 9px 40px;
+    background: #fff;
+    color: var(--cv-text);
+    border: 1px solid #dfe7f0;
+    border-radius: 11px;
     outline: none;
-    font-size: 0.9rem;
-    width: 200px;
+    font: inherit;
+    font-size: 13px;
 }
 
-.cv-btn-filter {
-    background-color: white;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #64748b;
-    cursor: pointer;
+.cv-search-box input::placeholder { color: #95a2b6; }
+
+.cv-search-box input:focus {
+    border-color: #d6ab51;
+    box-shadow: 0 0 0 3px rgba(211, 155, 23, .10);
 }
 
-/* --- CUADRÍCULA TARJETAS --- */
+/* Cuadrícula flexible: aprovecha el ancho disponible */
 .cv-classes-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 285px), 1fr));
+    align-items: stretch;
+    gap: var(--cv-gap);
+    min-width: 0;
 }
 
+/* Tarjeta: compacta por fuera, cómoda por dentro */
 .cv-class-card {
-    background-color: white;
-    border: 1px solid #e2e8f0;
-    border-radius: 16px;
-    padding: 1.5rem;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-}
-
-.cv-card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-}
-
-.cv-tag {
-    font-size: 0.75rem;
-    font-weight: 700;
-    padding: 0.3rem 0.8rem;
-    border-radius: 20px;
-}
-
-.tag-blue { background-color: #e0f2fe; color: #0284c7; }
-.tag-green { background-color: #dcfce3; color: #16a34a; }
-.tag-purple { background-color: #f3e8ff; color: #9333ea; }
-
-.cv-btn-options {
-    background: none;
-    border: 1px solid #e2e8f0;
-    border-radius: 50%;
-    width: 28px;
-    height: 28px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    box-sizing: border-box;
+    min-width: 0;
+    min-height: 260px;
+    padding: 20px;
+    background: #fff;
+    border: 1px solid var(--cv-line);
+    border-radius: 19px;
+    box-shadow: 0 3px 14px rgba(16, 24, 40, .035);
     cursor: pointer;
-    color: #64748b;
-    font-weight: bold;
-}
-
-.cv-card-illustration {
-    height: 120px;
-    border-radius: 12px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 4rem;
-    margin-bottom: 1.5rem;
-}
-
-.bg-blue { background-color: #f0f9ff; }
-.bg-green { background-color: #f0fdf4; }
-.bg-purple { background-color: #faf5ff; }
-
-.cv-card-info {
-    margin-bottom: 1.5rem;
-}
-
-.cv-card-info h4 {
-    font-size: 1.1rem;
-    color: #1e293b;
-    margin: 0 0 0.25rem 0;
-    font-weight: 800;
-}
-
-.cv-code {
-    font-size: 0.8rem;
-    color: #94a3b8;
-}
-
-.cv-card-stats {
-    display: flex;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-}
-
-.cv-stat {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.cv-stat svg {
-    width: 18px;
-    height: 18px;
-    color: #1C466F;
-}
-
-.cv-stat div {
-    display: flex;
-    flex-direction: column;
-}
-
-.cv-stat strong {
-    font-size: 0.95rem;
-    color: #1e293b;
-    line-height: 1;
-}
-
-.cv-stat span {
-    font-size: 0.7rem;
-    color: #94a3b8;
-    margin-top: 2px;
-}
-
-.cv-card-footer {
-    display: flex;
-    gap: 0.75rem;
-    margin-top: auto;
-}
-
-.cv-btn-view {
-    flex: 1;
-    background-color: white;
-    color: #1C466F;
-    border: 1.5px solid #e0f2fe;
-    padding: 0.6rem;
-    border-radius: 12px;
-    font-size: 0.9rem;
-    font-weight: 700;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
-    transition: background-color 0.2s;
-}
-
-.cv-btn-view:hover {
-    background-color: #f0f9ff;
-}
-
-.cv-btn-more {
-    width: 42px;
-    background-color: white;
-    border: 1.5px solid #e2e8f0;
-    color: #64748b;
-    border-radius: 12px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-@media (max-width: 768px) {
-    .cv-banner-create {
-        flex-direction: column;
-        text-align: center;
-        padding: 1.5rem 1.25rem;
-        gap: 1.25rem;
-        margin-bottom: 2rem;
-        box-sizing: border-box;
-    }
-
-    .cv-banner-illustration {
-        width: 140px;
-        height: auto;
-        margin: 0 auto;
-    }
-
-    .cv-banner-illustration img {
-        width: 100%;
-        height: auto;
-        object-fit: contain;
-    }
-
-    .cv-btn-create {
-        width: 100%;
-        justify-content: center;
-        box-sizing: border-box;
-    }
-
-    .cv-list-header {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 1rem;
-    }
-
-    .cv-list-actions {
-        width: 100%;
-        gap: 0.75rem;
-    }
-
-    .cv-search-box {
-        flex: 1;
-    }
-
-    .cv-search-box input {
-        width: 100%;
-        box-sizing: border-box;
-    }
-
-    .cv-btn-filter {
-        flex-shrink: 0;
-    }
-
-    .cv-classes-grid {
-        grid-template-columns: 1fr;
-        gap: 1.25rem;
-    }
-
-    .cv-class-card {
-        padding: 1.25rem;
-    }
-
-    .cv-card-stats {
-        justify-content: space-between;
-        gap: 0.75rem;
-    }
-
-    /* MODAL: crear una nueva clase */
-
-    .cv-modal-content {
-        padding: 1.5rem;
-    }
-}
-
-.cv-class-card {
-    cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
 }
 
 .cv-class-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 22px rgba(29, 41, 57, 0.08);
+    border-color: #e1d3b3;
+    box-shadow: 0 9px 24px rgba(16, 24, 40, .07);
 }
 
 .cv-class-card:focus-visible {
-    outline: 3px solid #d49a16;
+    outline: 2px solid #c79639;
     outline-offset: 3px;
+}
+
+.cv-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-width: 0;
+    margin-bottom: 17px;
+}
+
+.cv-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    max-width: calc(100% - 47px);
+    min-height: 31px;
+    box-sizing: border-box;
+    padding: 6px 11px;
+    border-radius: 9px;
+    overflow: hidden;
+    background: #ecf3ff;
+    color: #3376bd;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.cv-tag > svg { flex-shrink: 0; }
+
+.cv-btn-options {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 34px;
+    width: 34px;
+    height: 34px;
+    border: 1px solid #e3e9f1;
+    border-radius: 10px;
+    background: #fff;
+    color: #718096;
+    cursor: pointer;
+}
+
+.cv-btn-options:hover { background: #f5f7fb; }
+
+.cv-card-info {
+    min-width: 0;
+    margin-bottom: 17px;
+}
+
+.cv-card-info h4 {
+    margin: 0 0 9px;
+    color: #172033;
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+
+.cv-code {
+    display: block;
+    color: #8392a8;
+    font-size: 12px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+/* Dos líneas consistentes para evitar datos encimados */
+.cv-card-stats {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 9px;
+    margin: auto 0 16px;
+    padding: 0;
+    min-width: 0;
+}
+
+.cv-stat-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    color: #64748b;
+    font-size: 12.5px;
+    line-height: 1.4;
+}
+
+.cv-stat-inline svg {
+    flex: 0 0 17px;
+    color: #5279a8;
+}
+
+.cv-stat-inline strong {
+    color: #253248;
+    font-weight: 750;
+}
+
+.cv-card-footer {
+    display: flex;
+    min-width: 0;
+    padding-top: 13px;
+    border-top: 1px solid #edf0f3;
+}
+
+.cv-btn-view {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    flex: 1;
+    min-height: 40px;
+    padding: 9px 12px;
+    border: 1px solid #dce8f6;
+    border-radius: 10px;
+    background: #fff;
+    color: #1c466f;
+    font: inherit;
+    font-size: 12.5px;
+    font-weight: 750;
+    cursor: pointer;
+    transition: background .15s ease;
+}
+
+.cv-btn-view:hover { background: #f1f7ff; }
+
+.cv-btn-create:focus-visible,
+.cv-btn-view:focus-visible,
+.cv-btn-options:focus-visible {
+    outline: 2px solid #c79639;
+    outline-offset: 3px;
+}
+
+.cv-no-results {
+    grid-column: 1 / -1;
+    margin: 0;
+    padding: 26px;
+    border: 1px dashed #dce4ed;
+    border-radius: 13px;
+    background: #fff;
+    color: #728094;
+    font-size: 13px;
+    line-height: 1.5;
+    text-align: center;
+}
+
+/* Adaptación según el ancho REAL del área de clases */
+@media (max-width: 780px) {
+    .cv-banner-create {
+        flex-wrap: wrap;
+        padding: 18px;
+    }
+
+    .cv-banner-content { flex: 1 1 calc(100% - 68px); }
+    .cv-banner-create .cv-btn-create { margin-left: 68px; }
+}
+
+@media (max-width: 620px) {
+    .cv-list-header { align-items: stretch; }
+    .cv-list-actions, .cv-search-box, .cv-search-box input { width: 100%; }
+}
+
+@media (max-width: 480px) {
+    .cv-container { padding: 15px; }
+    .cv-banner-create .cv-btn-create { width: 100%; margin-left: 0; }
+    .cv-classes-grid { grid-template-columns: 1fr; }
+    .cv-class-card { padding: 18px; min-height: 0; }
+    .cv-banner-content h3 { font-size: 16px; }
 }
